@@ -1,0 +1,61 @@
+.book-item {
+  display: flex;
+  margin-top: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 30px;
+}
+
+.order-item-image-header {
+  width: 60px;
+}
+.order-item-image {
+  height: 100px;
+  width: 60px;
+}
+.order-item-name {
+  padding-left: 30px;
+  font-size: 20px;
+  width: 300px;
+}
+.book-totalquantity {
+  display: flex;
+  font-size: 16px;
+  width: 170px;
+  justify-content: center;
+  align-items: center;
+}
+.order-item-quantity {
+  display: flex;
+  font-size: 16px;
+  width: 180px;
+  justify-content: center;
+  align-items: center;
+}
+
+.discountt {
+  font-weight: 400;
+  margin-left: 8px;
+  border: 1px solid rgb(255, 66, 78);
+  border-radius: 2px;
+  background-color: rgb(255, 240, 241);
+  color: rgb(255, 66, 78);
+  line-height: 22px;
+  font-size: 15px;
+  margin-bottom: 0px;
+  margin-top: 8px;
+}
+.action-item-slice {
+  margin: 0px 10px;
+  padding-bottom: 0px;
+}
+.action-item {
+  margin: 0px 10px;
+  padding-bottom: 0px;
+  cursor: pointer;
+  color: dodgerblue;
+}
+.form-item {
+  margin-bottom: 10px !important;
+}

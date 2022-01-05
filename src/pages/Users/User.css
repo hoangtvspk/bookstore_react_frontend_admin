@@ -1,0 +1,48 @@
+.user-item {
+  display: flex;
+  margin-top: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 30px;
+}
+.user-propertive {
+  display: flex;
+  font-size: 16px;
+  width: 140px;
+  justify-content: center;
+  align-items: center;
+}
+.user-propertive-name {
+  display: flex;
+  font-size: 16px;
+  width: 100px;
+  justify-content: center;
+  align-items: center;
+}
+.user-propertive-title {
+  display: flex;
+  font-size: 16px;
+  width: 140px;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+.user-propertive-name-title {
+  display: flex;
+  font-size: 16px;
+  width: 100px;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+.action-item-slice {
+  margin: 0px 10px;
+  padding-bottom: 0px;
+}
+.action-item {
+  margin: 0px 10px;
+  padding-bottom: 0px;
+  cursor: pointer;
+  color: dodgerblue;
+}
