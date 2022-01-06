@@ -8,7 +8,7 @@ import store from "./redux/store";
 import "bootstrap/dist/css/bootstrap.css";
 import "antd/dist/antd.css";
 import "react-image-gallery/styles/css/image-gallery.css";
-
+import "../node_modules/react-vis/dist/style.css";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
