@@ -8,7 +8,6 @@ import { LoginForm, UserInfo } from "../../models/user";
 import { userLogIn } from "../../redux/slices/authSlice";
 import { adminRoutes } from "../../routes/routes";
 import "./Login.css";
-import Logo from "../../Image/logoLeft.png";
 
 const Login = () => {
   const dispatch = useDispatch();

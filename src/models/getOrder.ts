@@ -38,5 +38,4 @@ export interface GetOrder{
     totalPrice: number,
     status: string,
     orderItems:[Cart ]
-   
 }
