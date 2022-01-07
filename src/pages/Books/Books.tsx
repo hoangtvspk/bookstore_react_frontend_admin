@@ -141,9 +141,9 @@ function MyPurchase() {
               )}
             </div>
             <div className="book-totalquantity">
-              <div className="d-flex">
+              <div className="d-flex align-items-center">
                 <u
-                  className="action-item"
+                  className="book-action-item"
                   onClick={() => {
                     onEdit(books.id.toString());
                   }}
@@ -152,7 +152,7 @@ function MyPurchase() {
                 </u>
                 <p className="action-item-slice"> | </p>
                 <u
-                  className="action-item"
+                  className="book-action-item"
                   onClick={() => {
                     onDelete(books.id.toString());
                   }}

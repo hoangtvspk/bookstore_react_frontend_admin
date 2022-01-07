@@ -25,7 +25,7 @@ import {
   faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { adminRoutes } from "../../routes/routes";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import SubMenu from "antd/lib/menu/SubMenu";
 
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
@@ -37,6 +37,10 @@ import BreadCrumb from "../BreadCrumbs/BreadCrumb";
 const { Header, Content } = Layout;
 const AppLayout: React.FC = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const location = useLocation();
+  const [selectedMenu, setSelectedMenu] = useState(
+    location.pathname.split("/")[1] || "home"
+  );
   const toggle = () => {
     setCollapsed((preValue) => !preValue);
     console.log(collapsed);
@@ -64,8 +68,12 @@ const AppLayout: React.FC = ({ children }) => {
           <div>
             <img src={Logo} className="logo"></img>
           </div>
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-            <Menu.Item key="1" icon={<DashboardFilled />}>
+          <Menu theme="dark" mode="inline" selectedKeys={[selectedMenu]}>
+            <Menu.Item
+              key="1"
+              icon={<DashboardFilled />}
+              onClick={() => setSelectedMenu("1")}
+            >
               <Link to={adminRoutes.home}>Home</Link>
             </Menu.Item>
             <SubMenu key="2" icon={<BookTwoTone />} title="Books Management">
@@ -73,6 +81,7 @@ const AppLayout: React.FC = ({ children }) => {
                 key="3"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
+                onClick={() => setSelectedMenu("3")}
               >
                 {" "}
                 <Link to={adminRoutes.books}>Books List</Link>
@@ -81,6 +90,7 @@ const AppLayout: React.FC = ({ children }) => {
                 key="4"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
+                onClick={() => setSelectedMenu("4")}
               >
                 <Link to={adminRoutes.addBooks}>Add New Books</Link>
               </Menu.Item>
@@ -91,6 +101,7 @@ const AppLayout: React.FC = ({ children }) => {
                 key="6"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
+                onClick={() => setSelectedMenu("6")}
               >
                 {" "}
                 <Link to={adminRoutes.users}>Users List</Link>
@@ -99,11 +110,16 @@ const AppLayout: React.FC = ({ children }) => {
                 key="7"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
+                onClick={() => setSelectedMenu("7")}
               >
                 <Link to={adminRoutes.addUsers}>Add New Users</Link>
               </Menu.Item>
             </SubMenu>
-            <Menu.Item key="8" icon={<MoneyCollectFilled />}>
+            <Menu.Item
+              key="8"
+              icon={<MoneyCollectFilled />}
+              onClick={() => setSelectedMenu("8")}
+            >
               <Link to={adminRoutes.order}>Orders</Link>
             </Menu.Item>
             {/* <Menu.Item key="9" icon={<ShoppingCartOutlined />}>
@@ -118,6 +134,7 @@ const AppLayout: React.FC = ({ children }) => {
                 key="11"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
+                onClick={() => setSelectedMenu("11")}
               >
                 {" "}
                 <Link to={adminRoutes.categories}>Categories List</Link>
@@ -126,6 +143,7 @@ const AppLayout: React.FC = ({ children }) => {
                 key="12"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
+                onClick={() => setSelectedMenu("12")}
               >
                 <Link to={adminRoutes.addCategories}>Add New Categories</Link>
               </Menu.Item>

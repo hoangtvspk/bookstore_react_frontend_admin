@@ -1,5 +1,6 @@
 export const HTTP_CONFIG = {
   baseURL: "http://localhost:8080/api/v1/",
+  // baseURL: "http://8aff098a639e.sn.mynetname.net/Bookstore_springboot/api/v1/",
   headers: { "Content-Type": "application/json" },
 };
 
@@ -27,4 +28,5 @@ export const APP_API = {
   reportByMonth: "/admin/report-revenue-month/year/:year/month/:month",
   reportByYear: "/admin/report-revenue-year/:year",
   reportByEveryYear: "/admin/report-revenue-every-year",
+  reportBestSelling: "/admin/report-best-selling",
 };
