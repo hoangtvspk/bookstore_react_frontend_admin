@@ -1,4 +1,4 @@
-import { message, Spin } from "antd";
+import { message, Popconfirm, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { APP_API } from "../../httpClient/config";
@@ -86,7 +86,7 @@ function Users() {
             <div className="user-propertive">
               <div className="d-flex">
                 <u
-                  className="action-item"
+                  className="book-action-item"
                   onClick={() => {
                     onEdit(users.id.toString());
                   }}
@@ -94,14 +94,16 @@ function Users() {
                   Edit
                 </u>
                 <p className="action-item-slice"> | </p>
-                <u
-                  className="action-item"
-                  onClick={() => {
+                <Popconfirm
+                  title="Are you sure to delete this user?"
+                  onConfirm={() => {
                     onDelete(users.id.toString());
                   }}
+                  okText="Yes"
+                  cancelText="No"
                 >
-                  Delete
-                </u>
+                  <u className="book-action-item">Delete</u>
+                </Popconfirm>
               </div>
             </div>
           </div>

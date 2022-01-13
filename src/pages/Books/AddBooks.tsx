@@ -143,14 +143,8 @@ const AddBooks = () => {
     //   new Blob([JSON.stringify(file1)], { type: "application/json" })
     // );
     formData.append("file1", file1);
-    formData.append(
-      "file2",
-      new Blob([JSON.stringify(file2)], { type: "application/json" })
-    );
-    formData.append(
-      "file3",
-      new Blob([JSON.stringify(file3)], { type: "application/json" })
-    );
+    formData.append("file2", file2);
+    formData.append("file3", file3);
     setSubmitting(true);
     httpClient()
       .post(APP_API.addBook, formData, {

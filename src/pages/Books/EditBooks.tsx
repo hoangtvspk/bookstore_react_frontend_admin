@@ -73,14 +73,12 @@ const EditBooks = () => {
   };
 
   const [file1, setFile1] = useState({} as Blob);
-  const [file2, setFile2] = useState("" as unknown as Blob);
-  const [file3, setFile3] = useState("" as unknown as Blob);
+  const [file2, setFile2] = useState({} as Blob);
+  const [file3, setFile3] = useState({} as Blob);
   const handleFileChange = (e: any) => {
-    console.log(e.target.files);
     setFile1(e.target.files[0]);
   };
   const handleFile2Change = (e: any) => {
-    console.log(e);
     setFile2(e.target.files[0]);
   };
   const handleFile3Change = (e: any) => {
@@ -121,6 +119,7 @@ const EditBooks = () => {
     console.log(values);
     console.log(
       JSON.stringify({
+        id,
         nameBook,
         author,
         discount,
@@ -139,6 +138,7 @@ const EditBooks = () => {
       new Blob(
         [
           JSON.stringify({
+            id,
             nameBook,
             author,
             discount,
@@ -152,22 +152,14 @@ const EditBooks = () => {
       )
     );
 
-    // formData.append(
-    //   "file1",
-    //   new Blob([JSON.stringify(file1)], { type: "application/json" })
-    // );
     formData.append("file1", file1);
-    formData.append(
-      "file2",
-      new Blob([JSON.stringify(file2)], { type: "application/json" })
-    );
-    formData.append(
-      "file3",
-      new Blob([JSON.stringify(file3)], { type: "application/json" })
-    );
+
+    formData.append("file2", file2);
+    formData.append("file3", file3);
     setSubmitting(true);
+
     httpClient()
-      .post(APP_API.addBook, formData, {
+      .post(APP_API.editBook, formData, {
         headers: {
           Authorization: localStorage.getItem("token") || "",
           "Content-Type": "multipart/form-data",

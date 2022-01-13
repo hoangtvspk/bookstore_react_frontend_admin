@@ -1,4 +1,4 @@
-import { message, Spin } from "antd";
+import { message, Popconfirm, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "../../components/PageTitle/PageTitle";
@@ -74,7 +74,7 @@ function Categories() {
                 <div className="user-propertive-category">
                   <div className="d-flex">
                     <u
-                      className="action-item"
+                      className="book-action-item"
                       onClick={() => {
                         onEdit(category.id.toString());
                       }}
@@ -82,14 +82,16 @@ function Categories() {
                       Edit
                     </u>
                     <p className="action-item-slice"> | </p>
-                    <u
-                      className="action-item"
-                      onClick={() => {
+                    <Popconfirm
+                      title="Are you sure to delete this category?"
+                      onConfirm={() => {
                         onDelete(category.id.toString());
                       }}
+                      okText="Yes"
+                      cancelText="No"
                     >
-                      Delete
-                    </u>
+                      <u className="book-action-item">Delete</u>
+                    </Popconfirm>
                   </div>
                 </div>
               </div>

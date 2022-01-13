@@ -1,6 +1,6 @@
 import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Collapse, message, Select, Spin } from "antd";
+import { Collapse, message, Popconfirm, Select, Spin } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
@@ -98,12 +98,18 @@ function Orders() {
                     <p className="purchase-item-text">{purchaseItem.status}</p>
                     {purchaseItem.status == "Đặt hàng" && (
                       <>
-                        <u
-                          className="purchase-item-text action-item"
-                          onClick={() => onCancel(purchaseItem.id)}
+                        <Popconfirm
+                          title="Are you sure to cancel this order?"
+                          onConfirm={() => {
+                            onCancel(purchaseItem.id);
+                          }}
+                          okText="Yes"
+                          cancelText="No"
                         >
-                          Cancel
-                        </u>
+                          <u className="purchase-item-text action-item">
+                            Cancel
+                          </u>
+                        </Popconfirm>
                       </>
                     )}
                     {purchaseItem.status == "Đã hủy" && (

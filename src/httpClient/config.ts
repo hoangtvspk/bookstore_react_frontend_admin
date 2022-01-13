@@ -1,13 +1,14 @@
 export const HTTP_CONFIG = {
   baseURL: "http://localhost:8080/api/v1/",
   // baseURL: "http://8aff098a639e.sn.mynetname.net/Bookstore_springboot/api/v1/",
+    // baseURL: "http://13.250.107.167:4876/Bookstore_springboot/api/v1/",
   headers: { "Content-Type": "application/json" },
 };
 
 export const APP_API = {
   login: "/auth/login-admin",
   addBook: "/admin/add",
-  editBook: "/admin/edit/:id",
+  editBook: "/admin/edit",
   deleteBook: "/admin/delete/:id",
   users: "/admin/users",
   getUsers: "/admin/users/:id",

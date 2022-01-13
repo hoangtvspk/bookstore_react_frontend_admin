@@ -1,4 +1,4 @@
-import { Collapse, message, Pagination, Spin } from "antd";
+import { Collapse, message, Pagination, Popconfirm, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -100,10 +100,10 @@ function MyPurchase() {
             <div className="order-item-name">
               <p style={{ marginBottom: "0px" }}>{books.nameBook}</p>
               <p style={{ fontSize: "14px", paddingTop: "0px" }}>
-                Thể loại: {books.category.nameCategory}
+                Category: {books.category.nameCategory}
               </p>
               <p style={{ fontSize: "14px", paddingTop: "0px" }}>
-                Tác giả: {books.author}
+                Author: {books.author}
               </p>
             </div>
 
@@ -151,14 +151,16 @@ function MyPurchase() {
                   Edit
                 </u>
                 <p className="action-item-slice"> | </p>
-                <u
-                  className="book-action-item"
-                  onClick={() => {
+                <Popconfirm
+                  title="Are you sure to delete this book?"
+                  onConfirm={() => {
                     onDelete(books.id.toString());
                   }}
+                  okText="Yes"
+                  cancelText="No"
                 >
-                  Delete
-                </u>
+                  <u className="book-action-item">Delete</u>
+                </Popconfirm>
               </div>
             </div>
           </div>
