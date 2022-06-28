@@ -10,6 +10,7 @@ export interface AddBookForm {
         detail: string,
         idCate: number,
     }
+    file0: string,
     file1: string,
     file2: string,
     file3: string,

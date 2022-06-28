@@ -1,16 +1,16 @@
-import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import { faBook, faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Collapse, message, Popconfirm, Select, Spin } from "antd";
+import { Collapse, message, Select, Spin } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import React, { useEffect, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
+import NothingImg from "../../Image/bubbleNothing.jpg";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
 import { AddressOrder } from "../../models/addressOrder";
-import { Cart, GetOrder } from "../../models/getOrder";
-
+import { GetOrder } from "../../models/getOrder";
 import "./Orders.css";
 
 const { Panel } = Collapse;
@@ -72,150 +72,170 @@ function Orders() {
 
   return (
     <Spin spinning={submitting}>
-      {orderArray.length > 0 &&
-        orderArray
-          .slice(0)
-          .reverse()
-          .map((purchaseItem: GetOrder) => (
-            <>
-              {purchaseItem.status != "Trong giỏ hàng" && (
-                <div className="order-array-item">
+      <div>
+        {orderArray.length > 0 && (
+          <div
+            className="min-vh  "
+            style={{ minHeight: "calc(100vh - 200px)" }}
+          >
+            {orderArray
+              .slice(0)
+              .reverse()
+              .map((purchaseItem: GetOrder) => (
+                <div
+                  className="order-array-item rounded-3"
+                  onClick={() => {
+                    // navigate(
+                    //   adminRoutes.orderDetail.replace(
+                    //     ":id",
+                    //     purchaseItem.id.toString()
+                    //   )
+                    // );
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="purchase-order-info">
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        paddingTop: "0px",
+                        marginBottom: 0,
+                        color: "	#555555",
+                      }}
+                    >
+                      {purchaseItem.date}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: "16px",
+                        paddingTop: "0px",
+                        marginBottom: 0,
+                        color: "	#990000",
+                      }}
+                    >
+                      {purchaseItem.status}
+                    </p>
+                  </div>
                   <div className="purchase-item-title">
-                    <p className="purchase-item-text-title">Order ID</p>
-                    <p className="purchase-item-text-title">Receiver</p>
-                    <p className="purchase-item-text-title">Address</p>
-                    <p className="purchase-item-text-title">Order Date</p>
-                    <p className="purchase-item-text-title">Status</p>
-                    <p className="purchase-item-text-title">Action</p>
+                    <div className="item-image-header"></div>
+                    <div className="item-name"></div>
+
+                    <div
+                      className="item-totalquantity"
+                      style={{ borderLeft: "lightsteelblue solid 0.3px" }}
+                    >
+                      Đơn Giá
+                    </div>
+                    <div
+                      className="item-quantity"
+                      style={{ borderLeft: "lightsteelblue solid 0.3px" }}
+                    >
+                      Số lượng
+                    </div>
+                    <div
+                      className="item-totalprice"
+                      style={{ borderLeft: "lightsteelblue solid 0.3px" }}
+                    >
+                      Thành Tiền
+                    </div>
                   </div>
                   <div className="purchase-item">
-                    <p className="purchase-item-text">{purchaseItem.id}</p>
-                    <p className="purchase-item-text">
-                      {purchaseItem.firstName + " " + purchaseItem.lastName}
-                    </p>
-                    <p className="purchase-item-text">{purchaseItem.address}</p>
-                    <p className="purchase-item-text">{purchaseItem.date}</p>
-                    <p className="purchase-item-text">{purchaseItem.status}</p>
-                    {purchaseItem.status == "Đặt hàng" && (
-                      <>
-                        <Popconfirm
-                          title="Are you sure to cancel this order?"
-                          onConfirm={() => {
-                            onCancel(purchaseItem.id);
-                          }}
-                          okText="Yes"
-                          cancelText="No"
-                        >
-                          <u className="purchase-item-text action-item">
-                            Cancel
-                          </u>
-                        </Popconfirm>
-                      </>
-                    )}
-                    {purchaseItem.status == "Đã hủy" && (
-                      <>
-                        <u className="purchase-item-text action-item-cancelled">
-                          Cancel
-                        </u>
-                      </>
-                    )}
+                    <img
+                      alt="itemimage"
+                      className="item-image"
+                      src={purchaseItem.orderItems[0].book.bookImages[0].image}
+                    ></img>
+                    <div className="item-name">
+                      <p style={{ marginBottom: "0px" }}>
+                        {purchaseItem.orderItems[0].book.nameBook}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          paddingTop: "0px",
+                          marginBottom: 0,
+                        }}
+                      >
+                        Thể loại:{" "}
+                        {purchaseItem.orderItems[0].book.category.nameCategory}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "12px",
+                          paddingTop: "0px",
+                          marginBottom: 0,
+                        }}
+                      >
+                        Tác giả: {purchaseItem.orderItems[0].book.author}
+                      </p>
+                      <p style={{ fontSize: "12px", paddingTop: "0px" }}>
+                        Còn: {purchaseItem.orderItems[0].book.quantity}
+                      </p>
+                    </div>
+
+                    <div className="item-totalquantity">
+                      <p style={{ marginBottom: "0px" }}>
+                        {stringPrice(
+                          purchaseItem.orderItems[0].book.price -
+                            (purchaseItem.orderItems[0].book.price *
+                              purchaseItem.orderItems[0].book.discount) /
+                              100
+                        )}{" "}
+                        ₫
+                      </p>
+                      {purchaseItem.orderItems[0].book.discount > 0 && (
+                        <>
+                          <p
+                            style={{
+                              color: "rgb(128, 128, 137) ",
+                              marginTop: "8px",
+                              fontSize: "15px",
+                              textDecoration: "line-through",
+                              paddingLeft: "8px",
+                              marginBottom: "0px",
+                            }}
+                          >
+                            {stringPrice(purchaseItem.orderItems[0].book.price)}{" "}
+                            ₫
+                          </p>
+                          <p className="discountt">
+                            -{purchaseItem.orderItems[0].book.discount}%
+                          </p>
+                        </>
+                      )}
+                    </div>
+
+                    <div className="item-quantity">
+                      <p style={{ marginBottom: "0px" }}>
+                        {purchaseItem.orderItems[0].quantity}
+                      </p>
+                    </div>
+                    <div className="item-totalprice">
+                      {stringPrice(
+                        purchaseItem.orderItems[0].quantity *
+                          (purchaseItem.orderItems[0].book.price -
+                            (purchaseItem.orderItems[0].book.price *
+                              purchaseItem.orderItems[0].book.discount) /
+                              100)
+                      )}{" "}
+                      ₫
+                    </div>
                   </div>
 
-                  <Collapse ghost>
-                    <Panel
-                      header={
-                        <u className="order-collapse-header">
-                          Show The Ordered Products
-                        </u>
-                      }
-                      key="1"
-                      className="order-collapse"
-                    >
-                      <div className="purchase-order-item">
-                        <div className="order-item-image-header"></div>
-                        <div className="order-item-name"></div>
-                        <div className="order-item-totalquantity">
-                          Available
-                        </div>
-                        <div className="order-item-totalquantity">
-                          Unit Price
-                        </div>
-                        <div className="order-item-quantity">Quantity</div>
-                        <div className="order-item-totalprice">Total Price</div>
-                      </div>
-                      {purchaseItem.orderItems.length > 0 &&
-                        purchaseItem.orderItems.map((orderItem: Cart) => (
-                          <div className="purchase-order-item">
-                            <img
-                              className="order-item-image"
-                              src={orderItem.book.bookImages[0].image}
-                            ></img>
-                            <div className="order-item-name">
-                              <p style={{ marginBottom: "0px" }}>
-                                {orderItem.book.nameBook}
-                              </p>
-                              <p
-                                style={{ fontSize: "14px", paddingTop: "0px" }}
-                              >
-                                Thể loại: {orderItem.book.category.nameCategory}
-                              </p>
-                              <p
-                                style={{ fontSize: "14px", paddingTop: "0px" }}
-                              >
-                                Tác giả: {orderItem.book.author}
-                              </p>
-                            </div>
-                            <div className="order-item-totalquantity">
-                              {orderItem.book.quantity}
-                            </div>
-                            <div className="order-item-totalquantity">
-                              <p style={{ marginBottom: "0px" }}>
-                                {stringPrice(
-                                  orderItem.book.price -
-                                    (orderItem.book.price *
-                                      orderItem.book.discount) /
-                                      100
-                                )}{" "}
-                                ₫
-                              </p>
-                              {orderItem.book.discount > 0 && (
-                                <>
-                                  <p
-                                    style={{
-                                      color: "rgb(128, 128, 137) ",
-                                      marginTop: "8px",
-                                      fontSize: "15px",
-                                      textDecoration: "line-through",
-                                      paddingLeft: "8px",
-                                      marginBottom: "0px",
-                                    }}
-                                  >
-                                    {stringPrice(orderItem.book.price)} ₫
-                                  </p>
-                                  <p className="discountt">
-                                    -{orderItem.book.discount}%
-                                  </p>
-                                </>
-                              )}
-                            </div>
-
-                            <div className="order-item-quantity">
-                              {orderItem.quantity}
-                            </div>
-                            <div className="order-item-totalprice">
-                              {stringPrice(
-                                orderItem.quantity *
-                                  (orderItem.book.price -
-                                    (orderItem.book.price *
-                                      orderItem.book.discount) /
-                                      100)
-                              )}{" "}
-                              ₫
-                            </div>
-                          </div>
-                        ))}
-                    </Panel>
-                  </Collapse>
+                  <p
+                    style={{
+                      fontSize: "13px",
+                      paddingTop: "0px",
+                      marginBottom: 0,
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      className="mr-1"
+                      icon={faBook}
+                      color="#3366FF"
+                    ></FontAwesomeIcon>
+                    {purchaseItem.orderItems.length} sản phẩm
+                  </p>
                   <div className="purchase-order-total-layout">
                     <div className="purchase-order-total-layout-border">
                       <p className="purchase-order-total-title">
@@ -224,7 +244,7 @@ function Orders() {
                           style={{ color: "red" }}
                           icon={faDollarSign}
                         />
-                        Order Total:{" "}
+                        Tổng Đơn Hàng:{" "}
                       </p>
                       <p className="purchase-order-total">
                         {stringPrice(purchaseItem.totalPrice)} ₫
@@ -232,9 +252,20 @@ function Orders() {
                     </div>
                   </div>
                 </div>
-              )}
-            </>
-          ))}
+              ))}
+          </div>
+        )}
+      </div>
+      {orderArray?.length === 0 && (
+        <div className="bg-white p-4 orderDetail-background-height d-flex justify-content-center align-items-center">
+          <div>
+            <img alt="nothing" src={NothingImg} height="300" width="500" />
+            <h2 className="d-flex justify-content-center">
+              Chưa có đơn hàng nào!
+            </h2>
+          </div>
+        </div>
+      )}
     </Spin>
   );
 }

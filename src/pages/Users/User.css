@@ -37,11 +37,11 @@
   font-weight: bold;
 }
 .action-item-slice {
-  margin: 0px 10px;
+  margin: 0px 0px;
   padding-bottom: 0px;
 }
 .action-item {
-  margin: 0px 10px;
+  margin: 0px 0px;
   padding-bottom: 0px;
   cursor: pointer;
   color: dodgerblue;

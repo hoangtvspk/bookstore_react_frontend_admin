@@ -1,0 +1,11 @@
+.layout-footer {
+    display: flex;
+    background-color: #f8f9fa !important;
+
+    padding: 10px 30px;
+  
+    height: 10%;
+    bottom: 0;
+    border-top: 1px solid rgba(0,0,0,.1);
+
+  }

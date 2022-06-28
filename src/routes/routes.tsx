@@ -16,23 +16,25 @@ import AddCategories from "../pages/Categories/AddCategories";
 import MyAccount from "../pages/MyAccount/MyAccount";
 import UpdateProfile from "../pages/MyAccount/UpdateProfile";
 import UpdatePassword from "../pages/MyAccount/UpdatePassword";
+// import OrderDetail from "../pages/Orders/OrderDetail";
 
 export const adminRoutes = {
   login: "/login",
   home: "/",
   books: "/booksList",
-  addBooks: "/booksList/add",
-  EditBook: "/booksList/edit/:id",
+  addBooks: "/booksListAdd",
+  EditBook: "/booksListEdit/:id",
   users: "/usersList",
-  addUsers: "/usersList/add",
-  editUsers: "/usersList/edit/:id",
+  addUsers: "/usersListAdd",
+  editUsers: "/usersListEdit/:id",
   order: "/ordersList",
+  // orderDetail: "/ordersList/orderdetail/:id",
   cart: "/cartsList",
   categories: "/categories",
-  editCategories: "/categories/edit/:id",
-  addCategories: "/categories/add",
+  editCategories: "/categoriesEdit/:id",
+  addCategories: "/categoriesAdd",
   myAccount: "/my-account",
-  updateProfile: "/my-account/update",
+  updateProfile: "/my-accountUpdate",
   updatePassword: "/my-account/password",
 };
 
@@ -105,6 +107,10 @@ export const appComponentConfig: IAppComponentConfig[] = [
     path: adminRoutes.updatePassword,
     component: <UpdatePassword />,
   },
+  // {
+  //   path: adminRoutes.orderDetail,
+  //   component: <OrderDetail />,
+  // },
 ];
 
 export const renderAppComponent = (

@@ -2,10 +2,13 @@
   background: white;
   width: 100%;
   padding-left: 50px;
+  min-height: 500px;
 }
 .label {
   font-size: 20px !important;
 }
-.menu-background {
-  width: 600px !important;
+.site-account-background {
+  background: transparent;
+  padding: 13;
+  min-height: calc(100vh - 300px);
 }

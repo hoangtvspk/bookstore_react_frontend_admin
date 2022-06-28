@@ -1,23 +1,18 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Form, Input, message, Select, Spin, Upload } from "antd";
+import { Button, Form, Input, message, Select, Spin, Image } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { SelectValue } from "antd/lib/select";
 import { ChangeEvent, useEffect, useState } from "react";
-import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate } from "react-router-dom";
 import PageTitle from "../../components/PageTitle/PageTitle";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
 import { AddBookForm } from "../../models/addBook";
-import { Book, Category } from "../../models/book";
+import { Category } from "../../models/book";
 import { adminRoutes } from "../../routes/routes";
-import ImgCrop from "antd-img-crop";
 
+import TextArea from "antd/lib/input/TextArea";
 import "./Books.css";
-import { UploadChangeParam } from "antd/lib/upload";
-import { UploadFile } from "antd/lib/upload/interface";
 
 const layout = {
   labelCol: { span: 8 },
@@ -29,7 +24,6 @@ const layout = {
 /* eslint-enable no-template-curly-in-string */
 
 const AddBooks = () => {
-  const dispatch = useDispatch();
   const [bookForm] = useForm();
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
@@ -47,7 +41,6 @@ const AddBooks = () => {
   const nameInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ): void => {
-    // const {name, value} = event.target;
     setName(event.target.value);
   };
   const authorInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -63,28 +56,27 @@ const AddBooks = () => {
   const priceInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setPrice(parseInt(event.target.value));
   };
-  const detailInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+  const detailInputChange = (event: ChangeEvent<HTMLTextAreaElement>): void => {
     setDetail(event.target.value);
   };
   const idCateInputChange = (event: SelectValue): void => {
     setIdCate(event);
   };
 
-  const [file1, setFile1] = useState({} as Blob);
-  const [file2, setFile2] = useState({} as Blob);
-  const [file3, setFile3] = useState({} as Blob);
-
-  //   const onChange = (e: UploadChangeParam<UploadFile<any>>) => {
-  //     setFile1(e.file);
-  //   };
-  const handleFileChange = (e: any) => {
-    setFile1(e.target.files[0]);
-  };
-  const handleFile2Change = (e: any) => {
-    setFile2(e.target.files[0]);
-  };
-  const handleFile3Change = (e: any) => {
-    setFile3(e.target.files[0]);
+  const [images, setImages] = useState([] as ImageListType);
+  const maxNumber = 69;
+  const imageList2 = [];
+  const onChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+    for (let i = 0; i < imageList.length; i++) {
+      imageList2.push(imageList[i].file);
+    }
+    setImages(imageList);
+    // setFile1(imageList[0].file);
   };
 
   useEffect(() => {
@@ -103,7 +95,7 @@ const AddBooks = () => {
   const onFinish = (values: AddBookForm) => {
     setIdCate(1);
     const formData: FormData = new FormData();
-    console.log(file1);
+
     console.log(values);
     console.log(
       JSON.stringify({
@@ -115,9 +107,6 @@ const AddBooks = () => {
         detail,
         idCate,
       })
-    );
-    console.log(
-      new Blob([JSON.stringify(file1)], { type: "application/json" })
     );
 
     formData.append(
@@ -137,14 +126,12 @@ const AddBooks = () => {
         { type: "application/json" }
       )
     );
+    console.log(images);
+    for (let i = 0; i < images.length; i++) {
+      console.log(images[i]);
+      formData.append("files", images[i].file as string | Blob);
+    }
 
-    // formData.append(
-    //   "file1",
-    //   new Blob([JSON.stringify(file1)], { type: "application/json" })
-    // );
-    formData.append("file1", file1);
-    formData.append("file2", file2);
-    formData.append("file3", file3);
     setSubmitting(true);
     httpClient()
       .post(APP_API.addBook, formData, {
@@ -154,10 +141,11 @@ const AddBooks = () => {
         },
       })
       .then((res) => {
-        message.success("Add Successfully");
+        message.success("Thêm Sản Phẩm Thành Công!");
         navigate(adminRoutes.books);
       })
       .catch((err) => {
+        message.error("Thêm Sản Phẩm Thất Bại!");
         console.error(err);
       })
       .finally(() => setSubmitting(false));
@@ -166,140 +154,287 @@ const AddBooks = () => {
   return (
     <Spin spinning={submitting}>
       <div className="address-background">
-        <PageTitle>Add Books</PageTitle>
-        <div className="site-layout-background d-flex align-items-center justify-content-center ">
-          <Form
-            {...layout}
-            name="nest-messages"
-            form={bookForm}
-            onFinish={onFinish}
-          >
-            <Form.Item
-              className="form-item "
-              name="nameBook"
-              label="Name Book"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  nameInputChange(e);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              className="form-item "
-              label="Category"
-              name="idCate"
-              rules={[{ required: true }]}
-            >
-              <Select
-                allowClear
-                onChange={(e) => {
-                  idCateInputChange(e);
-                }}
-                defaultValue={1}
-              >
-                {categoryArray.length > 0 &&
-                  categoryArray.map((category: Category) => (
-                    <Option value={category.id}>
-                      <p style={{ marginBottom: "0" }}>
-                        {category.nameCategory}
-                      </p>
-                    </Option>
-                  ))}
-              </Select>
-            </Form.Item>
+        <PageTitle>Thêm Sản Phẩm</PageTitle>
 
-            <Form.Item
-              className="form-item "
-              name="author"
-              label="Author"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  authorInputChange(e);
+        <Form
+          {...layout}
+          name="nest-messages"
+          form={bookForm}
+          onFinish={onFinish}
+        >
+          <div className="site-layout-background d-flex align-items-center ">
+            <div style={{ marginLeft: "200px" }}>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
+
+                    color: "#555555",
+                  }}
+                >
+                  Tên Sách:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="nameBook"
+                rules={[{ required: true }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    nameInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div
+                className="d-flex justify-content-between"
+                style={{ width: "800px" }}
+              >
+                <div>
+                  {" "}
+                  <span
+                    style={{
+                      fontSize: 16,
+
+                      color: "#555555",
+                    }}
+                  >
+                    Thể Loại:
+                  </span>
+                  <Form.Item
+                    className="form-item "
+                    name="idCate"
+                    rules={[{ required: true }]}
+                  >
+                    <Select
+                      style={{ width: "260px" }}
+                      allowClear
+                      onChange={(e) => {
+                        idCateInputChange(e);
+                      }}
+                      defaultValue={1}
+                    >
+                      {categoryArray.length > 0 &&
+                        categoryArray.map((category: Category) => (
+                          <Option value={category.id}>
+                            <p style={{ marginBottom: "0" }}>
+                              {category.nameCategory}
+                            </p>
+                          </Option>
+                        ))}
+                    </Select>
+                  </Form.Item>
+                </div>
+                <div style={{ marginLeft: "40px" }}>
+                  <span
+                    style={{
+                      fontSize: 16,
+
+                      color: "#555555",
+                    }}
+                  >
+                    Tác Giả:
+                  </span>
+                  <Form.Item
+                    className="form-item "
+                    name="author"
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      style={{ width: "500px" }}
+                      onChange={(e) => {
+                        authorInputChange(e);
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+              </div>
+              <div
+                className="d-flex justify-content-between"
+                style={{ width: "800px" }}
+              >
+                <div>
+                  <span
+                    style={{
+                      fontSize: 16,
+
+                      color: "#555555",
+                    }}
+                  >
+                    Số Lượng:
+                  </span>
+                  <Form.Item
+                    style={{ width: "200px" }}
+                    className="form-item "
+                    name="quantity"
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      style={{ width: "200px" }}
+                      onChange={(e) => {
+                        quantityInputChange(e);
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+
+                <div style={{ paddingLeft: "100px" }}>
+                  <span
+                    style={{
+                      fontSize: 16,
+
+                      color: "#555555",
+                    }}
+                  >
+                    Đơn Giá (VNĐ):
+                  </span>
+                  <Form.Item
+                    className="form-item "
+                    name="price"
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      style={{ width: "200px" }}
+                      onChange={(e) => {
+                        priceInputChange(e);
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+                <div style={{ paddingLeft: "100px" }}>
+                  <span
+                    style={{
+                      fontSize: 16,
+
+                      color: "#555555",
+                    }}
+                  >
+                    Khuyến Mãi:
+                  </span>
+                  <Form.Item
+                    className="form-item "
+                    name="discount"
+                    rules={[{ required: true }]}
+                  >
+                    <Input
+                      style={{ width: "200px" }}
+                      onChange={(e) => {
+                        discountInputChange(e);
+                      }}
+                    />
+                  </Form.Item>
+                </div>
+              </div>
+              <span
+                style={{
+                  fontSize: 16,
+
+                  color: "#555555",
                 }}
-              />
-            </Form.Item>
-            <Form.Item
-              className="form-item "
-              name="discount"
-              label="Discount"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  discountInputChange(e);
+              >
+                Mô Tả Sản Phẩm:
+              </span>
+              <Form.Item
+                className="form-item "
+                name="detail"
+                rules={[{ required: true }]}
+              >
+                <TextArea
+                  style={{ width: "800px" }}
+                  rows={4}
+                  onChange={(e) => {
+                    detailInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <span
+                style={{
+                  fontSize: 16,
+
+                  color: "#555555",
                 }}
-              />
-            </Form.Item>
-            <Form.Item
-              className="form-item "
-              name="quantity"
-              label="Quantity"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  quantityInputChange(e);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              className="form-item "
-              name="price"
-              label="Price"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  priceInputChange(e);
-                }}
-              />
-            </Form.Item>
-            <Form.Item
-              className="form-item "
-              name="detail"
-              label="Detail"
-              rules={[{ required: true }]}
-            >
-              <Input
-                onChange={(e) => {
-                  detailInputChange(e);
-                }}
-              />
-            </Form.Item>
-            {/* <Upload
-              action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              listType="picture"
-              onChange={(e) => onChange(e)}
-            >
-              <Button icon={<UploadOutlined />}>Upload</Button>
-            </Upload> */}
-            <div className="col" style={{ marginTop: "15px" }}>
-              <Input type="file" name="file1" onChange={handleFileChange} />
+              >
+                Hình Ảnh Sản Phẩm:
+              </span>
+              <ImageUploading
+                multiple
+                value={images}
+                onChange={onChange}
+                maxNumber={maxNumber}
+              >
+                {({
+                  imageList,
+                  onImageUpload,
+                  onImageRemoveAll,
+                  onImageUpdate,
+                  onImageRemove,
+                  isDragging,
+                  dragProps,
+                }) => (
+                  // write your building UI
+                  <div className="upload__image-wrapper">
+                    <div style={{ marginBottom: "10px" }}>
+                      <Button
+                        style={isDragging ? { color: "red" } : undefined}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                      >
+                        Thêm Hình
+                      </Button>
+                      &nbsp;
+                      <Button onClick={onImageRemoveAll}>Xóa Toàn Bộ</Button>
+                    </div>
+
+                    <div
+                      className="d-flex"
+                      style={{
+                        minHeight: "120px",
+                        border: "1px solid rgba(0,0,0,.1)",
+                        padding: "10px",
+                      }}
+                    >
+                      {imageList.map((image, index) => (
+                        <div key={index} className=" pr-3">
+                          <Image
+                            src={image.dataURL}
+                            alt=""
+                            width={100}
+                            height={100}
+                            style={{ objectFit: "cover" }}
+                          />
+                          <div className="">
+                            <Button onClick={() => onImageUpdate(index)}>
+                              Đổi
+                            </Button>
+                            <Button onClick={() => onImageRemove(index)}>
+                              Gỡ
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </ImageUploading>
+
+              <div
+                className="d-flex justify-content-end mt-3"
+                style={{ width: "800px" }}
+              >
+                <Form.Item className="form-item ">
+                  <Button
+                    style={{ width: "100px" }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Lưu
+                  </Button>
+                </Form.Item>
+              </div>
             </div>
-            <div className="col" style={{ marginTop: "15px" }}>
-              <Input type="file" name="file2" onChange={handleFile2Change} />
-            </div>
-            <div className="col" style={{ marginTop: "15px" }}>
-              <Input type="file" name="file3" onChange={handleFile3Change} />
-            </div>
-            <Form.Item
-              className="form-item "
-              wrapperCol={{ offset: 8, span: 16 }}
-            >
-              <Button type="primary" htmlType="submit">
-                Save New Book
-              </Button>
-            </Form.Item>
-            <Form.Item
-              wrapperCol={{ offset: 8, span: 16 }}
-              className="form-item "
-            ></Form.Item>
-          </Form>
-        </div>
+          </div>
+        </Form>
       </div>
     </Spin>
   );

@@ -11,9 +11,9 @@
 }
 
 .logo {
-  height: 50px;
+  height: 30px;
   margin: 16px;
-  background: rgba(255, 255, 255, 0.3);
+  background: transparent
 }
 
 .app-sidebar {
@@ -23,24 +23,40 @@
   /* width: 250px !important;
   max-width: 250px !important;
   min-width: 250px !important; */
-  height: 100vh !important;
-}
+  height: 100% !important;
+  overflow: auto;
 
+}
+-webkit-scrollbar {
+  display: none;
+}
 .app-content {
   margin-left: 250px !important;
 }
 
-.site-layout .site-layout-background {
+.site-layout  {
+  /* padding-top: 15px !important; */
+  background: #fff;
+}
+.site-layout-background {
+  /* padding-top: 15px !important; */
   background: #fff;
 }
 .flex-row {
-  height: 100vh !important;
+  height: 105vh !important;
 }
 .ant-layout-sider {
-  background: black !important;
+  /* background: black !important; */
 }
 .ant-menu.ant-menu-dark,
 .ant-menu-dark .ant-menu-sub,
 .ant-menu.ant-menu-dark .ant-menu-sub {
-  background: black !important;
+  background: transparent !important;
+}
+/* .ant-menu-submenu-selected{
+  background: red !important;
+} */
+.ant-menu-dark.ant-menu-dark:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background-color: rgba(141, 238, 238,0.3 ) !important;
+  
 }

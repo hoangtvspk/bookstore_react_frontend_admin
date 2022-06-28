@@ -13,11 +13,11 @@ const BreadCrumb = () => {
         <Breadcrumb
           separator=">"
           style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "8px 30px",
+            // display: "flex",
+            // alignItems: "center",
+            margin: "0px 30px",
             fontSize: "18px",
-            paddingBottom: "0",
+            // paddingBottom: "0",
           }}
         >
           {pathnames.length > 0 ? (

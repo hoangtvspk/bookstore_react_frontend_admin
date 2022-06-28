@@ -1,7 +1,7 @@
 export const HTTP_CONFIG = {
-  baseURL: "http://localhost:8080/api/v1/",
-  // baseURL: "http://8aff098a639e.sn.mynetname.net/Bookstore_springboot/api/v1/",
-    // baseURL: "http://13.250.107.167:4876/Bookstore_springboot/api/v1/",
+  // baseURL: "http://localhost:8080/api/v1/",
+  baseURL: "https://tomcat.vanhtuan0409.com/Bookstore_springboot/api/v1/",
+    // baseURL: "http://ec2-13-250-45-49.ap-southeast-1.compute.amazonaws.com:4876/Bookstore_springboot/api/v1/",
   headers: { "Content-Type": "application/json" },
 };
 
@@ -30,4 +30,5 @@ export const APP_API = {
   reportByYear: "/admin/report-revenue-year/:year",
   reportByEveryYear: "/admin/report-revenue-every-year",
   reportBestSelling: "/admin/report-best-selling",
+  newBook: "/books/new",
 };

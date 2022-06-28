@@ -1,4 +1,5 @@
-import { Collapse, message, Pagination, Popconfirm, Spin } from "antd";
+import { Collapse, message, Pagination, Popconfirm, Space, Spin } from "antd";
+import Table, { ColumnsType } from "antd/lib/table";
 import React, { useEffect, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -43,20 +44,7 @@ function MyPurchase() {
   };
 
   const [bookArrray, setBookArray] = useState<Book[]>([]);
-  useEffect(() => {
-    httpClient()
-      .get("/books")
-      .then((res) => {
-        console.log(res);
-        setBookArray(res.data);
-        console.log(bookArrray);
-        setShowingBook([...res.data.slice(0, DEFAULT_PAGE_SIZE)]);
-      })
-      .catch((err) => {
-        console.log(err);
-        message.error(err.response.data);
-      });
-  }, []);
+
   const onPageChange = (page: number, pageSize: number) => {
     setCurPage(page);
     setShowingBook([
@@ -78,103 +66,134 @@ function MyPurchase() {
       })
       .finally(() => setSubmitting(false));
   };
+  interface DataType {
+    bookImages: string;
+    nameBook: string;
+    category: string;
+    author: string;
+    quantity: number;
+    price: number[];
+    id: number;
+  }
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "Hình",
+      dataIndex: "bookImages",
+      key: "bookImages",
+      render: (text) => <img className="order-item-image" src={text}></img>,
+    },
+    {
+      title: "Tên Sách",
+      dataIndex: "nameBook",
+      key: "nameBook",
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: "Thể Loại",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Tác Giả",
+      dataIndex: "author",
+      key: "author",
+    },
+    {
+      title: "Kho",
+      key: "quantity",
+      dataIndex: "quantity",
+      render: (text) => <div style={{ width: "60px" }}>{text}</div>,
+    },
+    {
+      title: "Đơn Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (_, { price }) => (
+        <div className="d-flex align-items-center">
+          <p style={{ marginBottom: "0px" }}>
+            {stringPrice(price[0] - (price[0] * price[1]) / 100)} ₫
+          </p>
 
+          {price[1] > 0 && (
+            <>
+              <p className="mb-0">&nbsp;(-{price[1]}%)</p>
+            </>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: "Sửa/Xóa",
+      key: "action",
+      render: (_, { id }) => (
+        <div className="d-flex ">
+          <u
+            className="book-action-item pl-0 ml-0"
+            onClick={() => {
+              onEdit(id.toString());
+            }}
+          >
+            Sửa
+          </u>
+          <p className="action-item-slice"> | </p>
+          <Popconfirm
+            title="Are you sure to delete this book?"
+            onConfirm={() => {
+              onDelete(id.toString());
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <u className="book-action-item">Xóa</u>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+  const [data, setData] = useState<DataType[]>([]);
+
+  useEffect(() => {
+    setSubmitting(true);
+    httpClient()
+      .get(APP_API.newBook)
+      .then((res) => {
+        setSubmitting(true);
+        console.log(res);
+        setBookArray(res.data);
+        console.log(bookArrray);
+        setShowingBook([...res.data.slice(0, DEFAULT_PAGE_SIZE)]);
+
+        if (res.data.length > 0) {
+          res.data.map((book: Book) => {
+            setData((state) => [
+              ...state,
+              {
+                bookImages: book.bookImages[0]?.image,
+                author: book.author,
+                category: book.category?.nameCategory,
+                id: book.id,
+                nameBook: book.nameBook,
+                price: [book.price, book.discount],
+                quantity: book.quantity,
+              },
+            ]);
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data);
+      })
+      .finally(() => setSubmitting(false));
+  }, []);
   return (
     <Spin spinning={submitting}>
-      <div className="book-item">
-        <div className="order-item-image-header"></div>
-        <div className="order-item-name"></div>
-        <div className="book-totalquantity">Category</div>
-        <div className="book-totalquantity">Author</div>
-        <div className="book-totalquantity">Available</div>
-        <div className="book-totalquantity">Price</div>
-        <div className="book-totalquantity">Action</div>
-      </div>
-      {showingBook.length > 0 &&
-        showingBook.map((books: Book) => (
-          <div className="book-item">
-            <img
-              className="order-item-image"
-              src={books.bookImages[0].image}
-            ></img>
-            <div className="order-item-name">
-              <p style={{ marginBottom: "0px" }}>{books.nameBook}</p>
-              <p style={{ fontSize: "14px", paddingTop: "0px" }}>
-                Category: {books.category.nameCategory}
-              </p>
-              <p style={{ fontSize: "14px", paddingTop: "0px" }}>
-                Author: {books.author}
-              </p>
-            </div>
-
-            {books.category && (
-              <div className="book-totalquantity">
-                {books.category.nameCategory}
-              </div>
-            )}
-
-            <div className="book-totalquantity">{books.author}</div>
-            <div className="book-totalquantity">{books.quantity}</div>
-            <div className="book-totalquantity">
-              <p style={{ marginBottom: "0px" }}>
-                {stringPrice(
-                  books.price - (books.price * books.discount) / 100
-                )}{" "}
-                ₫
-              </p>
-              {books.discount > 0 && (
-                <>
-                  <p
-                    style={{
-                      color: "rgb(128, 128, 137) ",
-                      marginTop: "8px",
-                      fontSize: "15px",
-                      textDecoration: "line-through",
-                      paddingLeft: "8px",
-                      marginBottom: "0px",
-                    }}
-                  >
-                    {stringPrice(books.price)} ₫
-                  </p>
-                  <p className="discountt">-{books.discount}%</p>
-                </>
-              )}
-            </div>
-            <div className="book-totalquantity">
-              <div className="d-flex align-items-center">
-                <u
-                  className="book-action-item"
-                  onClick={() => {
-                    onEdit(books.id.toString());
-                  }}
-                >
-                  Edit
-                </u>
-                <p className="action-item-slice"> | </p>
-                <Popconfirm
-                  title="Are you sure to delete this book?"
-                  onConfirm={() => {
-                    onDelete(books.id.toString());
-                  }}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <u className="book-action-item">Delete</u>
-                </Popconfirm>
-              </div>
-            </div>
-          </div>
-        ))}
-      <div className="text-center">
-        <Pagination
-          className="p-3 mb-4"
-          total={bookArrray.length}
-          onChange={onPageChange}
-          defaultPageSize={DEFAULT_PAGE_SIZE}
-          current={curPage}
-          showSizeChanger={false}
-        />
-      </div>
+      <Table
+        columns={columns}
+        dataSource={data}
+        scroll={{ y: 430 }}
+        pagination={{ position: ["bottomCenter"] }}
+      />
     </Spin>
   );
 }

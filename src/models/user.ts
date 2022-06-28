@@ -8,6 +8,7 @@ export interface UserInfo {
     lastName:string;
     email: string;
     phoneNumber: number;
+    image: string;
     token: string;
     userRole: string;
 }

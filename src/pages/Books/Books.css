@@ -21,10 +21,10 @@
 }
 .book-totalquantity {
   display: flex;
-  font-size: 16px;
-  width: 170px;
-  justify-content: center;
-  align-items: center;
+
+  /* width: 170px; */
+  /* justify-content: center;
+  align-items: center; */
 }
 .order-item-quantity {
   display: flex;
@@ -58,4 +58,7 @@
 }
 .form-item {
   margin-bottom: 10px !important;
+}
+textarea.ant-input {
+  max-width: unset !important;
 }
