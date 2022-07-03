@@ -1,17 +1,14 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Form, Input, message, Select, Spin } from "antd";
+import { Button, Form, Input, message, Image, Spin } from "antd";
 import { useForm } from "antd/lib/form/Form";
-import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { ChangeEvent, useEffect, useState } from "react";
+import ImageUploading, { ImageListType } from "react-images-uploading";
+import { useNavigate, useParams } from "react-router-dom";
 import PageTitle from "../../components/PageTitle/PageTitle";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
-import { AddBookForm } from "../../models/addBook";
 import { Category } from "../../models/book";
-import { EditUser } from "../../models/editUser";
 import { adminRoutes } from "../../routes/routes";
+
 import "./User.css";
 
 const layout = {
@@ -23,11 +20,84 @@ const layout = {
 
 /* eslint-enable no-template-curly-in-string */
 
-const EditUsers = () => {
-  const [userForm] = useForm();
-  const navigate = useNavigate();
-  const [submitting, setSubmitting] = useState(false);
+const AddUsers = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const firstNameInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setFirstName(event.target.value);
+  };
+  const lastNameInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setLastName(event.target.value);
+  };
 
+  const emailInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setEmail(event.target.value);
+  };
+  const phoneNumberInputChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setPhoneNumber(event.target.value);
+  };
+  const [submitting, setSubmitting] = useState(false);
+  const [images, setImages] = useState([] as ImageListType);
+  const [currentedImage, setCurrentedImages] = useState([] as ImageListType);
+  const maxNumber = 1;
+  const navigate = useNavigate();
+
+  const onChange = (
+    imageList: ImageListType,
+    addUpdateIndex: number[] | undefined
+  ) => {
+    // data for submit
+    console.log(imageList, addUpdateIndex);
+
+    setImages(imageList);
+    // setFile1(imageList[0].file);
+  };
+
+  const onFinish = (values: any) => {
+    const formData: FormData = new FormData();
+    formData.append(
+      "user",
+      new Blob(
+        [
+          JSON.stringify({
+            id,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            currentedImage: currentedImage[0].dataURL,
+          }),
+        ],
+        { type: "application/json" }
+      )
+    );
+    if (images.length > 0)
+      for (let i = 0; i < images.length; i++) {
+        console.log(images[i]);
+        formData.append("file", images[i].file as string | Blob);
+      }
+
+    console.log(values);
+    setSubmitting(true);
+    httpClient()
+      .post(APP_API.editUsers, formData)
+      .then((res) => {
+        console.log(res);
+        message.success("Cập Nhật Người Dùng Thành Công");
+        navigate(adminRoutes.users);
+        window.scroll(0, 0);
+      })
+      .catch((err) => {
+        console.error(err);
+        message.error("Cập Nhật Người Dùng Thất Bại");
+      })
+      .finally(() => setSubmitting(false));
+  };
+  const [userForm] = useForm();
   const { id } = useParams();
   useEffect(() => {
     if (id) {
@@ -36,6 +106,12 @@ const EditUsers = () => {
         .then((res) => {
           console.log(res);
           userForm.setFieldsValue(res.data);
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
+          setEmail(res.data.email);
+          setPhoneNumber(res.data.phoneNumber);
+          setImages([{ dataURL: res.data.image }]);
+          setCurrentedImages([{ dataURL: res.data.image }]);
         })
         .catch((err) => {
           console.log(err);
@@ -43,76 +119,200 @@ const EditUsers = () => {
     }
   }, []);
 
-  const onFinish = (values: EditUser) => {
-    setSubmitting(true);
-    httpClient()
-      .post(APP_API.editUsers, values)
-      .then((res) => {
-        navigate(adminRoutes.users);
-        message.success("Edit User Successfully!");
-      })
-      .catch((err) => {
-        console.error(err);
-        message.error("Failed To Edit User!");
-      })
-      .finally(() => setSubmitting(false));
-  };
-
   return (
     <Spin spinning={submitting}>
-      <div className="address-background">
-        <PageTitle>Edit User</PageTitle>
-        <div className="site-layout-background d-flex align-items-center justify-content-center ">
-          <Form
-            {...layout}
-            name="nest-messages"
-            form={userForm}
-            onFinish={onFinish}
-          >
-            <Form.Item name="id" label="ID" rules={[{ required: true }]}>
-              <Input disabled />
-            </Form.Item>
-            <Form.Item name="email" label="Email" rules={[{ required: true }]}>
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="First Name"
-              name="firstName"
-              rules={[
-                { required: true, message: "Please input your address!" },
-              ]}
-            >
-              <Input />
-            </Form.Item>
+      <div className="address-background bg-white rounded-3">
+        <PageTitle>Thêm Người Dùng</PageTitle>
 
-            <Form.Item
-              name="lastName"
-              label="Last Name"
-              rules={[{ required: true }]}
-            >
-              <Input />
-            </Form.Item>
+        <Form
+          {...layout}
+          form={userForm}
+          name="nest-messages"
+          onFinish={onFinish}
+        >
+          <div className="site-layout-background d-flex align-items-center ">
+            <div style={{ marginLeft: "200px" }}>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
 
-            <Form.Item name="phoneNumber" label="Phone Number">
-              <Input />
-            </Form.Item>
+                    color: "#555555",
+                  }}
+                >
+                  Họ:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="lastName"
+                rules={[{ required: true, message: "Nhập Tên" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    lastNameInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="primary" htmlType="submit">
-                Update User
-              </Button>
-            </Form.Item>
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Link to={adminRoutes.users}>
-                <FontAwesomeIcon className="mr-2" icon={faArrowLeft} />
-                Turn Back
-              </Link>
-            </Form.Item>
-          </Form>
-        </div>
+                    color: "#555555",
+                  }}
+                >
+                  Tên:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="firstName"
+                rules={[{ required: true, message: "Nhập Tên" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    firstNameInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
+
+                    color: "#555555",
+                  }}
+                >
+                  Email:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="email"
+                rules={[{ required: true, message: "Nhập Tên" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    emailInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
+
+                    color: "#555555",
+                  }}
+                >
+                  Số Điện Thoại:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="phoneNumber"
+                rules={[{ required: true, message: "Nhập Mật Khẩu" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    phoneNumberInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <span
+                style={{
+                  fontSize: 16,
+
+                  color: "#555555",
+                }}
+              >
+                Hình Ảnh Sản Phẩm:
+              </span>
+              <ImageUploading
+                value={images}
+                onChange={onChange}
+                maxNumber={maxNumber}
+              >
+                {({
+                  imageList,
+                  onImageUpload,
+                  onImageRemoveAll,
+                  onImageUpdate,
+                  onImageRemove,
+                  isDragging,
+                  dragProps,
+                }) => (
+                  // write your building UI
+                  <div className="upload__image-wrapper">
+                    <div style={{ marginBottom: "10px" }}>
+                      <Button
+                        style={isDragging ? { color: "red" } : undefined}
+                        onClick={onImageUpload}
+                        {...dragProps}
+                      >
+                        Thêm Hình
+                      </Button>
+                      &nbsp;
+                      <Button onClick={onImageRemoveAll}>Xóa Toàn Bộ</Button>
+                    </div>
+
+                    <div
+                      className="d-flex"
+                      style={{
+                        minHeight: "120px",
+                        border: "1px solid rgba(0,0,0,.1)",
+                        padding: "10px",
+                      }}
+                    >
+                      {imageList.map((image, index) => (
+                        <div key={index} className=" pr-3">
+                          <Image
+                            src={image.dataURL}
+                            alt=""
+                            width={100}
+                            height={100}
+                            style={{ objectFit: "cover" }}
+                          />
+                          <div className="">
+                            <Button onClick={() => onImageUpdate(index)}>
+                              Đổi
+                            </Button>
+                            <Button onClick={() => onImageRemove(index)}>
+                              Gỡ
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </ImageUploading>
+
+              <div
+                className="d-flex justify-content-end mt-3"
+                style={{ width: "800px" }}
+              >
+                <Form.Item className="form-item ">
+                  <Button
+                    style={{ width: "100px" }}
+                    type="primary"
+                    htmlType="submit"
+                  >
+                    Lưu
+                  </Button>
+                </Form.Item>
+              </div>
+            </div>
+          </div>
+        </Form>
       </div>
     </Spin>
   );
 };
 
-export default EditUsers;
+export default AddUsers;

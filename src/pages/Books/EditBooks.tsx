@@ -189,7 +189,7 @@ const EditBooks = () => {
 
   return (
     <Spin spinning={submitting}>
-      <div className="address-background">
+      <div className="bg-white rounded-3">
         <PageTitle>Chỉnh Sửa Sản Phẩm</PageTitle>
         <Form
           {...layout}

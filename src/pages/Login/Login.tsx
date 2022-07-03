@@ -39,7 +39,6 @@ const Login = () => {
             className="site-layout-background  site-layout-background-login"
             // style={{ background: "red" }}
           >
-            <h2 className="mb-5">Login to DoubH dashboard</h2>
             <Form
               name="basic"
               labelCol={{ span: 8 }}
@@ -47,12 +46,11 @@ const Login = () => {
               initialValues={{ remember: true }}
               onFinish={onFinish}
             >
+              <h4 className="mb-5">Đăng Nhập Trang Quản Lý DoubH</h4>
               <Form.Item
                 label="Email"
                 name="email"
-                rules={[
-                  { required: true, message: "Please input your email!" },
-                ]}
+                rules={[{ required: true, message: "Nhập email!" }]}
               >
                 <Input className="w-100" />
               </Form.Item>
@@ -60,24 +58,14 @@ const Login = () => {
               <Form.Item
                 label="Password"
                 name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" },
-                ]}
+                rules={[{ required: true, message: "Nhập password!" }]}
               >
                 <Input.Password />
               </Form.Item>
 
-              <Form.Item
-                name="remember"
-                valuePropName="checked"
-                wrapperCol={{ offset: 8, span: 16 }}
-              >
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit">
-                  Login
+                  Đăng Nhập
                 </Button>
               </Form.Item>
             </Form>

@@ -5,6 +5,7 @@ export const authSlice = createSlice({
   initialState: {
     isAuth: !!localStorage.getItem("userInfo"),
     userInfo: JSON.parse(localStorage.getItem("userInfo") || "{}"),
+    isAdmin: !!(JSON.parse(localStorage.getItem("userInfo")||"{}").userRole==="ADMIN"),
   },
   reducers: {
     userLogIn: (state, payload) => {
@@ -12,6 +13,7 @@ export const authSlice = createSlice({
       state.userInfo = payload.payload;
       localStorage.setItem("token", payload.payload.token);
       localStorage.setItem("userInfo", JSON.stringify(payload.payload));
+      if(payload.payload.userRole == "ADMIN") state.isAdmin = true;
     },
     userLogOut: (state) => {
       state.isAuth = false;
@@ -19,6 +21,7 @@ export const authSlice = createSlice({
       localStorage.removeItem("token");
       localStorage.removeItem("userInfo");
       localStorage.removeItem("cart");
+      state.isAdmin = false;
     },
     updateUserInfo: (state, payload) => {
       state.userInfo = payload.payload;

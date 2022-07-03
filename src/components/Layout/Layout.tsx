@@ -1,17 +1,5 @@
-import {
-  BookTwoTone,
-  DashboardFilled,
-  LogoutOutlined,
-  MoneyCollectFilled,
-  PlusOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import {
-  faSignOutAlt,
-  faUser,
-  faUserCircle,
-} from "@fortawesome/free-solid-svg-icons";
+import { PlusOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import { faSignOutAlt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Divider, Layout, Menu } from "antd";
 import Sider from "antd/lib/layout/Sider";
 import SubMenu from "antd/lib/menu/SubMenu";
@@ -21,32 +9,28 @@ import { adminRoutes } from "../../routes/routes";
 import "./Layout.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Provider,
-  RootStateOrAny,
-  useDispatch,
-  useSelector,
-} from "react-redux";
-import Logo from "../../Image/doubhlogo7.png";
-import SideBarBackGround from "../../Image/sidebarbackground.png";
-import ChartIcon from "../../Image/chart-icon-color.png";
-import BookIcon from "../../Image/185628_book_icon.png";
-import CustomerIcon from "../../Image/customer.png";
-import OrderIcon from "../../Image/order.png";
-import CateIcon from "../../Image/categories.png";
-import LogOutIcon from "../../Image/logout.png";
-import EventIcon from "../../Image/event.png";
-import { userLogOut } from "../../redux/slices/authSlice";
-import BreadCrumb from "../BreadCrumbs/BreadCrumb";
 import Search from "antd/lib/input/Search";
+import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
+import BookIcon from "../../Image/185628_book_icon.png";
+import CateIcon from "../../Image/categories.png";
+import ChartIcon from "../../Image/chart-icon-color.png";
+import CustomerIcon from "../../Image/customer.png";
+import Logo from "../../Image/doubhlogo7.png";
+import Employees from "../../Image/employee.png";
+import EventIcon from "../../Image/event.png";
+import LogOutIcon from "../../Image/logout.png";
+import OrderIcon from "../../Image/order.png";
+import SideBarBackGround from "../../Image/sidebarbackground.png";
+import { UserInfo } from "../../models/auth";
+import { userLogOut } from "../../redux/slices/authSlice";
 import { updateKeySearch } from "../../redux/slices/keySearchSlice";
-import { faDashcube } from "@fortawesome/free-brands-svg-icons";
 import PageFooter from "../Footer/Footer";
 
 const { Header, Content } = Layout;
 const AppLayout: React.FC = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const [myLocation, setMyLocation] = useState("Thống Kê");
   const [selectedMenu, setSelectedMenu] = useState(
     location.pathname.split("/")[1] || "home"
   );
@@ -56,6 +40,9 @@ const AppLayout: React.FC = ({ children }) => {
     console.log(collapsed);
   };
   const navigate = useNavigate();
+  const userInfo = useSelector(
+    (state: RootStateOrAny) => state.authSlice.userInfo as UserInfo
+  );
   const userName = useSelector((state: RootStateOrAny) => {
     if (state.authSlice.userInfo) {
       return (
@@ -88,29 +75,86 @@ const AppLayout: React.FC = ({ children }) => {
   };
   useEffect(() => {
     switch (location.pathname.split("/")[1]) {
+      case "":
+        setMyLocation("Thống Kê");
+        break;
       case "booksList":
         setOpenKey(["books"]);
+        setMyLocation("Quản Lý Sách");
         break;
       case "booksListAdd":
         setOpenKey(["books"]);
+        setMyLocation("Quản Lý Sách");
+        break;
+      case "booksListEdit":
+        setSelectedMenu("booksList");
+        setOpenKey(["books"]);
+        setMyLocation("Quản Lý Sách");
         break;
       case "usersList":
         setOpenKey(["users"]);
+        setMyLocation("Khách Hàng");
         break;
       case "usersListAdd":
         setOpenKey(["users"]);
+        setMyLocation("Khách Hàng");
+        break;
+      case "usersListEdit":
+        setSelectedMenu("usersList");
+        setOpenKey(["users"]);
+        setMyLocation("Khách Hàng");
         break;
       case "categories":
         setOpenKey(["category"]);
+        setMyLocation("Danh Mục Sách");
         break;
       case "categoriesAdd":
         setOpenKey(["category"]);
+        setMyLocation("Danh Mục Sách");
         break;
-      case "eventsList":
-        setOpenKey(["events"]);
+      case "categoriesEdit":
+        setSelectedMenu("categories");
+        setOpenKey(["category"]);
+        setMyLocation("Danh Mục Sách");
         break;
-      case "eventsListAdd":
-        setOpenKey(["events"]);
+      case "events":
+        setOpenKey(["event"]);
+        setMyLocation("Sự Kiện");
+        break;
+      case "addEvent":
+        setOpenKey(["event"]);
+        setMyLocation("Sự Kiện");
+        break;
+      case "editEvent":
+        setSelectedMenu("events");
+        setOpenKey(["event"]);
+        setMyLocation("Sự Kiện");
+        break;
+      case "eventBooks":
+        setSelectedMenu("events");
+        setOpenKey(["event"]);
+        setMyLocation("Sự Kiện");
+        break;
+      case "addBooksToEvent":
+        setSelectedMenu("events");
+        setOpenKey(["event"]);
+        setMyLocation("Sự Kiện");
+        break;
+      case "ordersList":
+        setMyLocation("Đơn Hàng");
+        break;
+      case "employeesList":
+        setOpenKey(["employees"]);
+        setMyLocation("Nhân Viên");
+        break;
+      case "employeesListEdit":
+        setSelectedMenu("employeesList");
+        setOpenKey(["employees"]);
+        setMyLocation("Nhân Viên");
+        break;
+      case "employeesListAdd":
+        setOpenKey(["employees"]);
+        setMyLocation("Nhân Viên");
         break;
       default:
         setOpenKey([]);
@@ -122,20 +166,31 @@ const AppLayout: React.FC = ({ children }) => {
       <Layout className="flex-row">
         <Sider
           style={{ backgroundImage: "url(" + SideBarBackGround + ")" }}
+          // style={{ backgroundColor: "white" }}
           className="app-sidebar"
           trigger={null}
           collapsible
           collapsed={collapsed}
           width="250px"
         >
-          <div>
-            <img src={Logo} className="logo"></img>
+          <div className="ml-2 mt-2">
+            <img
+              src={Logo}
+              onClick={() => {
+                setSelectedMenu("/");
+                window.scroll(0, 0);
+                setMyLocation("Thống Kê");
+                navigate(adminRoutes.home);
+              }}
+              className="logo"
+              style={{ cursor: "pointer" }}
+            ></img>
           </div>
           <Divider
             style={{
-              borderTop: "1px solid #555555",
-              marginTop: "5px",
-              marginBottom: "9px",
+              borderTop: "1px solid #D3D3D3",
+              marginTop: "3px",
+              marginBottom: "20px",
             }}
           ></Divider>
           <Menu
@@ -146,7 +201,11 @@ const AppLayout: React.FC = ({ children }) => {
           >
             <Menu.Item
               key="/"
-              onClick={() => setSelectedMenu("/")}
+              onClick={() => {
+                setSelectedMenu("/");
+                window.scroll(0, 0);
+                setMyLocation("Thống Kê");
+              }}
               icon={
                 <>
                   {
@@ -161,8 +220,58 @@ const AppLayout: React.FC = ({ children }) => {
                 </>
               }
             >
-              <Link to={adminRoutes.home}>Trang Chủ</Link>
+              <Link to={adminRoutes.home}>Thống Kê Doanh Thu</Link>
             </Menu.Item>
+            {userInfo.userRole === "ADMIN" && (
+              <SubMenu
+                key="employees"
+                icon={
+                  <>
+                    {
+                      <img
+                        src={Employees}
+                        height={30}
+                        width={30}
+                        style={{ borderRadius: "50%", objectFit: "cover" }}
+                      ></img>
+                    }
+                    &nbsp; &nbsp;
+                  </>
+                }
+                title="Nhân Viên"
+                onTitleClick={() => {
+                  if (openKey.includes("employees"))
+                    setOpenKey(openKey.filter((item) => item !== "employees"));
+                  else setOpenKey((state) => [...state, "employees"]);
+                }}
+              >
+                <Menu.Item
+                  key="employeesList"
+                  style={{ paddingLeft: "60px" }}
+                  icon={<UnorderedListOutlined />}
+                  onClick={() => {
+                    setSelectedMenu("employeesList");
+                    window.scroll(0, 0);
+                    setMyLocation("Nhân Viên");
+                  }}
+                >
+                  {" "}
+                  <Link to={adminRoutes.employees}>Danh Sách</Link>
+                </Menu.Item>
+                <Menu.Item
+                  key="employeesListAdd"
+                  style={{ paddingLeft: "60px" }}
+                  icon={<PlusOutlined />}
+                  onClick={() => {
+                    setSelectedMenu("employeesListAdd");
+                    window.scroll(0, 0);
+                    setMyLocation("Nhân Viên");
+                  }}
+                >
+                  <Link to={adminRoutes.addEmployees}>Thêm</Link>
+                </Menu.Item>
+              </SubMenu>
+            )}
             <SubMenu
               key="books"
               icon={
@@ -191,6 +300,8 @@ const AppLayout: React.FC = ({ children }) => {
                 icon={<UnorderedListOutlined />}
                 onClick={() => {
                   setSelectedMenu("booksList");
+                  window.scroll(0, 0);
+                  setMyLocation("Quản Lý Sách");
                 }}
               >
                 {" "}
@@ -200,7 +311,11 @@ const AppLayout: React.FC = ({ children }) => {
                 key="booksListAdd"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
-                onClick={() => setSelectedMenu("booksListAdd")}
+                onClick={() => {
+                  setSelectedMenu("booksListAdd");
+                  window.scroll(0, 0);
+                  setMyLocation("Quản Lý Sách");
+                }}
               >
                 <Link to={adminRoutes.addBooks}>Thêm</Link>
               </Menu.Item>
@@ -232,7 +347,11 @@ const AppLayout: React.FC = ({ children }) => {
                 key="usersList"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
-                onClick={() => setSelectedMenu("usersList")}
+                onClick={() => {
+                  setSelectedMenu("usersList");
+                  window.scroll(0, 0);
+                  setMyLocation("Khách Hàng");
+                }}
               >
                 {" "}
                 <Link to={adminRoutes.users}>Danh Sách</Link>
@@ -241,7 +360,11 @@ const AppLayout: React.FC = ({ children }) => {
                 key="usersListAdd"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
-                onClick={() => setSelectedMenu("usersListAdd")}
+                onClick={() => {
+                  setSelectedMenu("usersListAdd");
+                  window.scroll(0, 0);
+                  setMyLocation("Khách Hàng");
+                }}
               >
                 <Link to={adminRoutes.addUsers}>Thêm</Link>
               </Menu.Item>
@@ -261,7 +384,11 @@ const AppLayout: React.FC = ({ children }) => {
                   &nbsp; &nbsp;
                 </>
               }
-              onClick={() => setSelectedMenu("ordersList")}
+              onClick={() => {
+                setSelectedMenu("ordersList");
+                window.scroll(0, 0);
+                setMyLocation("Đơn Hàng");
+              }}
             >
               <Link to={adminRoutes.order}>Đơn Hàng</Link>
             </Menu.Item>
@@ -294,7 +421,11 @@ const AppLayout: React.FC = ({ children }) => {
                 key="categories"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
-                onClick={() => setSelectedMenu("11")}
+                onClick={() => {
+                  setSelectedMenu("categories");
+                  window.scroll(0, 0);
+                  setMyLocation("Danh Mục Sách");
+                }}
               >
                 {" "}
                 <Link to={adminRoutes.categories}>Danh Sách</Link>
@@ -303,13 +434,17 @@ const AppLayout: React.FC = ({ children }) => {
                 key="categoriesAdd"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
-                onClick={() => setSelectedMenu("categoriesAdd")}
+                onClick={() => {
+                  setSelectedMenu("categoriesAdd");
+                  window.scroll(0, 0);
+                  setMyLocation("Danh Mục Sách");
+                }}
               >
                 <Link to={adminRoutes.addCategories}>Thêm</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu
-              key="events"
+              key="event"
               icon={
                 <>
                   {
@@ -325,27 +460,35 @@ const AppLayout: React.FC = ({ children }) => {
               }
               title="Sự Kiện"
               onTitleClick={() => {
-                if (openKey.includes("events"))
-                  setOpenKey(openKey.filter((item) => item !== "events"));
-                else setOpenKey((state) => [...state, "events"]);
+                if (openKey.includes("event"))
+                  setOpenKey(openKey.filter((item) => item !== "event"));
+                else setOpenKey((state) => [...state, "event"]);
               }}
             >
               <Menu.Item
-                key="eventsList"
+                key="events"
                 style={{ paddingLeft: "60px" }}
                 icon={<UnorderedListOutlined />}
-                onClick={() => setSelectedMenu("11")}
+                onClick={() => {
+                  setSelectedMenu("events");
+                  window.scroll(0, 0);
+                  setMyLocation("Sự Kiện");
+                }}
               >
                 {" "}
-                <Link to={adminRoutes.categories}>Đang Diễn Ra</Link>
+                <Link to={adminRoutes.events}>Đang Diễn Ra</Link>
               </Menu.Item>
               <Menu.Item
-                key="eventsListAdd"
+                key="addEvent"
                 style={{ paddingLeft: "60px" }}
                 icon={<PlusOutlined />}
-                onClick={() => setSelectedMenu("12")}
+                onClick={() => {
+                  setSelectedMenu("addEvent");
+                  window.scroll(0, 0);
+                  setMyLocation("Sự Kiện");
+                }}
               >
-                <Link to={adminRoutes.addCategories}>Thêm</Link>
+                <Link to={adminRoutes.addEvents}>Thêm</Link>
               </Menu.Item>
             </SubMenu>
             <Menu.Item
@@ -393,7 +536,17 @@ const AppLayout: React.FC = ({ children }) => {
                 onClick: toggle,
               }
             )} */}
-            <BreadCrumb />
+            <div
+              style={{
+                fontSize: "18px",
+                width: "200px",
+                marginLeft: "30px",
+                fontFamily: "Helvetica",
+                color: "#888",
+              }}
+            >
+              {myLocation}
+            </div>
             <div
               style={{
                 minWidth: "60%",
@@ -435,20 +588,38 @@ const AppLayout: React.FC = ({ children }) => {
               <SubMenu
                 key="name"
                 title={userName}
-                className="font-name"
-                icon={<FontAwesomeIcon className="mr-2" icon={faUserCircle} />}
+                icon={
+                  <img
+                    src={userInfo?.image}
+                    height={30}
+                    width={30}
+                    style={{
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      marginRight: "10px",
+                    }}
+                  ></img>
+                }
               >
                 <Menu.Item key="my-account">
-                  <FontAwesomeIcon className="mr-2" icon={faUser} />
+                  <FontAwesomeIcon
+                    color="#339933"
+                    className="mr-2"
+                    icon={faUser}
+                  />
                   <Link to={adminRoutes.myAccount} className="font-submenu">
-                    My Account
+                    Thông Tin Cá Nhân
                   </Link>
                 </Menu.Item>
                 <Divider className="m-0" />
                 <Menu.Item key="logout" onClick={() => dispatch(userLogOut())}>
-                  <FontAwesomeIcon className="mr-2" icon={faSignOutAlt} />
+                  <FontAwesomeIcon
+                    color="#FF9900"
+                    className="mr-2"
+                    icon={faSignOutAlt}
+                  />
                   <Link to={adminRoutes.login} className="font-submenu">
-                    Log Out
+                    Đăng Xuất
                   </Link>
                 </Menu.Item>
               </SubMenu>

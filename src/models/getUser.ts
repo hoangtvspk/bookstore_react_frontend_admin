@@ -7,5 +7,6 @@ export interface User{
     passwordResetCode: number,
     phoneNumber: number,
     active: boolean,
+    image: string,
 }
 

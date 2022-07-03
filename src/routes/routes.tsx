@@ -16,19 +16,32 @@ import AddCategories from "../pages/Categories/AddCategories";
 import MyAccount from "../pages/MyAccount/MyAccount";
 import UpdateProfile from "../pages/MyAccount/UpdateProfile";
 import UpdatePassword from "../pages/MyAccount/UpdatePassword";
-// import OrderDetail from "../pages/Orders/OrderDetail";
+import OrderDetail from "../pages/Orders/OrderDetail";
+import Employee from "../pages/Employees/Employee";
+import AddEmployee from "../pages/Employees/AddEmployee";
+import EditEmployee from "../pages/Employees/EditEmployee";
+import OrderReport from "../pages/Home/OrderReport";
+import Events from "../pages/Events/Events";
+import AddEvents from "../pages/Events/AddEvents";
+import EditEvents from "../pages/Events/EditEvents";
+import EventBooks from "../pages/Events/EventBooks";
+import AddBooksToEvent from "../pages/Events/AddBooksToEvent";
 
 export const adminRoutes = {
   login: "/login",
   home: "/",
+  orderReport: "/orderReport",
   books: "/booksList",
   addBooks: "/booksListAdd",
-  EditBook: "/booksListEdit/:id",
+  bookEdit: "/booksListEdit/:id",
+  employees: "/employeesList",
+  addEmployees: "/employeesListAdd",
+  editEmployees: "/employeesListEdit/:id",
   users: "/usersList",
   addUsers: "/usersListAdd",
   editUsers: "/usersListEdit/:id",
   order: "/ordersList",
-  // orderDetail: "/ordersList/orderdetail/:id",
+  orderDetail: "/ordersList/orderdetail/:id",
   cart: "/cartsList",
   categories: "/categories",
   editCategories: "/categoriesEdit/:id",
@@ -36,12 +49,18 @@ export const adminRoutes = {
   myAccount: "/my-account",
   updateProfile: "/my-accountUpdate",
   updatePassword: "/my-account/password",
+  events: "/events",
+  addEvents: "/addEvent",
+  editEvents: "/editEvent/:id",
+  eventBooks: "/eventBooks/:id",
+  addBookToEvent: "/addBooksToEvent/:id",
 };
 
 interface IAppComponentConfig {
   path: string;
   component: React.ReactElement | null;
   noAuthRequired?: boolean;
+  isAdminRequired?: boolean;
 }
 
 export const appComponentConfig: IAppComponentConfig[] = [
@@ -63,12 +82,28 @@ export const appComponentConfig: IAppComponentConfig[] = [
     component: <AddBooks />,
   },
   {
-    path: adminRoutes.EditBook,
+    path: adminRoutes.bookEdit,
     component: <EditBook />,
   },
   {
     path: adminRoutes.order,
     component: <Orders />,
+  },
+  {
+    path: adminRoutes.employees,
+    component: <Employee />,
+    isAdminRequired: true,
+  },
+
+  {
+    path: adminRoutes.addEmployees,
+    component: <AddEmployee />,
+    isAdminRequired: true,
+  },
+  {
+    path: adminRoutes.editEmployees,
+    component: <EditEmployee />,
+    isAdminRequired: true,
   },
   {
     path: adminRoutes.users,
@@ -107,15 +142,40 @@ export const appComponentConfig: IAppComponentConfig[] = [
     path: adminRoutes.updatePassword,
     component: <UpdatePassword />,
   },
-  // {
-  //   path: adminRoutes.orderDetail,
-  //   component: <OrderDetail />,
-  // },
+  {
+    path: adminRoutes.orderDetail,
+    component: <OrderDetail />,
+  },
+  {
+    path: adminRoutes.orderReport,
+    component: <OrderReport />,
+  },
+  {
+    path: adminRoutes.events,
+    component: <Events />,
+  },
+  {
+    path: adminRoutes.addEvents,
+    component: <AddEvents />,
+  },
+  {
+    path: adminRoutes.editEvents,
+    component: <EditEvents />,
+  },
+  {
+    path: adminRoutes.eventBooks,
+    component: <EventBooks />,
+  },
+  {
+    path: adminRoutes.addBookToEvent,
+    component: <AddBooksToEvent />,
+  },
 ];
 
 export const renderAppComponent = (
   data: IAppComponentConfig[],
-  isAuth: boolean
+  isAuth: boolean,
+  isAdmin: boolean
 ) => {
   return (
     <Routes>
@@ -133,6 +193,14 @@ export const renderAppComponent = (
             <Route
               path={route.path}
               element={<Navigate replace to={adminRoutes.login}></Navigate>}
+            ></Route>
+          );
+        }
+        if (!isAdmin && route.isAdminRequired) {
+          return (
+            <Route
+              path={route.path}
+              element={<Navigate replace to={adminRoutes.home}></Navigate>}
             ></Route>
           );
         }

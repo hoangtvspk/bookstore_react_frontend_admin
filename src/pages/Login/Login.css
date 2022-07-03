@@ -9,11 +9,13 @@
 
 .site-layout-background-login {
   background: white !important;
-  margin-top: 10px;
-  height: 96% !important;
-  padding: 170px 60px !important;
+  opacity: 0.9;
+   height: 400px !important;
+   display: flex;
+   align-items: center;
+   justify-content: center;
   border-radius: 20px !important;
-  border-top: lightgray solid 1px !important;
+ padding: 0px 40px;
   box-shadow: 10px 10px 5px grey !important;
   font-family: Georgia, "Times New Roman", Times, serif !important;
 }

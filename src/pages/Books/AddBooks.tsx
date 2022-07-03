@@ -95,20 +95,6 @@ const AddBooks = () => {
   const onFinish = (values: AddBookForm) => {
     setIdCate(1);
     const formData: FormData = new FormData();
-
-    console.log(values);
-    console.log(
-      JSON.stringify({
-        nameBook,
-        author,
-        discount,
-        quantity,
-        price,
-        detail,
-        idCate,
-      })
-    );
-
     formData.append(
       "book",
       new Blob(
@@ -126,7 +112,6 @@ const AddBooks = () => {
         { type: "application/json" }
       )
     );
-    console.log(images);
     for (let i = 0; i < images.length; i++) {
       console.log(images[i]);
       formData.append("files", images[i].file as string | Blob);
@@ -153,7 +138,7 @@ const AddBooks = () => {
 
   return (
     <Spin spinning={submitting}>
-      <div className="address-background">
+      <div className="address-background bg-white rounded-3">
         <PageTitle>Thêm Sản Phẩm</PageTitle>
 
         <Form
@@ -178,7 +163,7 @@ const AddBooks = () => {
               <Form.Item
                 className="form-item "
                 name="nameBook"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "Nhập Tên" }]}
               >
                 <Input
                   style={{ width: "800px" }}
@@ -205,7 +190,7 @@ const AddBooks = () => {
                   <Form.Item
                     className="form-item "
                     name="idCate"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: "Chọn Thể Loại" }]}
                   >
                     <Select
                       style={{ width: "260px" }}
@@ -239,7 +224,7 @@ const AddBooks = () => {
                   <Form.Item
                     className="form-item "
                     name="author"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: "Nhập Tác Giả" }]}
                   >
                     <Input
                       style={{ width: "500px" }}
@@ -268,7 +253,7 @@ const AddBooks = () => {
                     style={{ width: "200px" }}
                     className="form-item "
                     name="quantity"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: "Nhập Số Lượng" }]}
                   >
                     <Input
                       style={{ width: "200px" }}
@@ -292,7 +277,7 @@ const AddBooks = () => {
                   <Form.Item
                     className="form-item "
                     name="price"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: "Nhập Giá" }]}
                   >
                     <Input
                       style={{ width: "200px" }}
@@ -315,7 +300,7 @@ const AddBooks = () => {
                   <Form.Item
                     className="form-item "
                     name="discount"
-                    rules={[{ required: true }]}
+                    rules={[{ required: true, message: "Nhập Khuyến Mãi" }]}
                   >
                     <Input
                       style={{ width: "200px" }}
@@ -338,7 +323,7 @@ const AddBooks = () => {
               <Form.Item
                 className="form-item "
                 name="detail"
-                rules={[{ required: true }]}
+                rules={[{ required: true, message: "Nhập Mô Tả" }]}
               >
                 <TextArea
                   style={{ width: "800px" }}

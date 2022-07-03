@@ -3,6 +3,7 @@ import { UserInfo } from "./auth";
 export interface Category {
     id: number,
     nameCategory: string,
+    image: string,
 };
 
 export interface BookImage {
@@ -36,7 +37,18 @@ export interface Book{
             date: string,
             message: string,
             rating: number,
-        }
+        },
         
     ],
+    bookForEvents:[
+        {
+            id: {
+                eventId: number,
+                bookId: number,
+            },
+            event: Event
+            discountValue: number,
+            discountPercentValue: number
+        }
+    ]
 }

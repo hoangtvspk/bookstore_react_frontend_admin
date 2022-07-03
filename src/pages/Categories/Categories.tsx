@@ -1,4 +1,5 @@
-import { message, Popconfirm, Spin } from "antd";
+import { Image, message, Popconfirm, Spin } from "antd";
+import Table, { ColumnsType } from "antd/lib/table";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PageTitle from "../../components/PageTitle/PageTitle";
@@ -19,24 +20,6 @@ function Categories() {
     navigate(adminRoutes.editCategories.replace(":id", id));
   };
 
-  useEffect(() => {
-    onLoad();
-  }, []);
-
-  const onLoad = () => {
-    httpClient()
-      .get(APP_API.categoryBooks)
-      .then((res) => {
-        console.log(res);
-        setCatesArray([...res.data]);
-        console.log(catesArray);
-      })
-      .catch((err) => {
-        console.log(err);
-        message.error(err.response.data);
-      });
-  };
-
   const onDelete = (id: string) => {
     setSubmitting(true);
     httpClient()
@@ -52,50 +35,106 @@ function Categories() {
       })
       .finally(() => setSubmitting(false));
   };
+  interface DataType {
+    image: string;
+    nameCategory: string;
+    id: number;
+  }
+  const columns: ColumnsType<DataType> = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      // render: text => <a>{text}</a>,
+    },
+    {
+      title: "Tên Thể Loại",
+      dataIndex: "nameCategory",
+      key: "nameCategory",
+    },
+    {
+      title: "Hình",
+      dataIndex: "image",
+      key: "image",
+      render: (text) => <Image src={text} height={100} width={60}></Image>,
+    },
+
+    {
+      title: "Sửa/Xóa",
+      key: "action",
+      render: (_, { id }) => (
+        <div className="d-flex ">
+          <u
+            className="book-action-item pl-0 ml-0"
+            onClick={() => {
+              onEdit(id.toString());
+            }}
+          >
+            Sửa
+          </u>
+          <p className="action-item-slice"> | </p>
+          <Popconfirm
+            title="Are you sure to delete this book?"
+            onConfirm={() => {
+              onDelete(id.toString());
+            }}
+            okText="Yes"
+            cancelText="No"
+          >
+            <u className="book-action-item">Xóa</u>
+          </Popconfirm>
+        </div>
+      ),
+    },
+  ];
+  const [data, setData] = useState<DataType[]>([]);
+  useEffect(() => {
+    onLoad();
+  }, []);
+
+  const onLoad = () => {
+    setData([]);
+    setSubmitting(true);
+    httpClient()
+      .get(APP_API.categoryBooks)
+      .then((res) => {
+        console.log(res);
+        if (res.data.length > 0) {
+          res.data.map((category: Category) => {
+            setData((state) => [
+              ...state,
+              {
+                id: category.id,
+                nameCategory: category.nameCategory,
+                image: category.image,
+              },
+            ]);
+          });
+        }
+        console.log(catesArray);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data);
+      })
+      .finally(() => setSubmitting(false));
+  };
 
   return (
     <Spin spinning={submitting}>
-      <PageTitle>Categories</PageTitle>
-      <div className="d-flex justify-content-center">
-        <div>
-          <div className="user-item">
-            <div className="user-propertive-title-category">Id</div>
-            <div className="user-propertive-title-category">Categories</div>
-            <div className="user-propertive-title-category">Action</div>
-          </div>
-          {catesArray.length > 0 &&
-            catesArray.map((category: Category) => (
-              <div className="book-item">
-                <div className="user-propertive-category">{category.id}</div>
-                <div className="user-propertive-category">
-                  {category.nameCategory}
-                </div>
-
-                <div className="user-propertive-category">
-                  <div className="d-flex">
-                    <u
-                      className="book-action-item"
-                      onClick={() => {
-                        onEdit(category.id.toString());
-                      }}
-                    >
-                      Edit
-                    </u>
-                    <p className="action-item-slice"> | </p>
-                    <Popconfirm
-                      title="Are you sure to delete this category?"
-                      onConfirm={() => {
-                        onDelete(category.id.toString());
-                      }}
-                      okText="Yes"
-                      cancelText="No"
-                    >
-                      <u className="book-action-item">Delete</u>
-                    </Popconfirm>
-                  </div>
-                </div>
-              </div>
-            ))}
+      <div className="bg-white ">
+        <PageTitle>Danh Mục</PageTitle>
+        <div className="d-flex justify-content-center align-content-center ">
+          <Table
+            style={{
+              width: "600px",
+              border: "1px solid rgba(0,0,0,.1)",
+              marginBottom: "20px",
+            }}
+            columns={columns}
+            dataSource={data}
+            pagination={{ position: ["bottomCenter"] }}
+          />
         </div>
       </div>
     </Spin>

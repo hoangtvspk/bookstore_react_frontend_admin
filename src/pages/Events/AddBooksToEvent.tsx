@@ -2,23 +2,37 @@ import {
   faBookmark,
   faBookOpen,
   faMoneyCheck,
+  faSearch,
   faSort,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { message, Popconfirm, Select, Spin } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Select,
+  Spin,
+  Image,
+} from "antd";
 import { SelectValue } from "antd/lib/select";
 import Table, { ColumnsType } from "antd/lib/table";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
 import { Book, Category } from "../../models/book";
+import { Event } from "../../models/event";
 import { updateKeySearch } from "../../redux/slices/keySearchSlice";
 import { adminRoutes } from "../../routes/routes";
-import "./Books.css";
+import "./Events.css";
+import EventIcon from "../../Image/event.png";
+import Search from "antd/lib/input/Search";
 
-function Books() {
+function AddBooksToEvent() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -146,51 +160,43 @@ function Books() {
       ),
     },
     {
-      title: "Sửa/Xóa",
+      title: "Tùy Chọn",
       key: "action",
       render: (_, { id }) => (
         <div className="d-flex ">
           <u
             className="book-action-item pl-0 ml-0"
             onClick={() => {
-              onEdit(id.toString());
+              showModal(id);
             }}
           >
-            Sửa
+            Đưa Vào Sự Kiện
           </u>
-          <p className="action-item-slice"> | </p>
-          <Popconfirm
-            title="Are you sure to delete this book?"
-            onConfirm={() => {
-              onDelete(id.toString());
-            }}
-            okText="Yes"
-            cancelText="No"
-          >
-            <u className="book-action-item">Xóa</u>
-          </Popconfirm>
         </div>
       ),
     },
   ];
   const setBooksData = (bookList: Book[]) => {
+    setData([]);
     setSubmitting(true);
     if (bookList.length > 0) {
       setData([]);
       bookList.map((book: Book) => {
-        setData((state) => [
-          ...state,
-          {
-            bookImages: book.bookImages[0]?.image,
-            author: book.author,
-            category: book.category?.nameCategory,
-            id: book.id,
-            nameBook: book.nameBook,
-            price: [book.price, book.discount],
-            quantity: book.quantity,
-            review: [book.rating, book.reviews.length],
-          },
-        ]);
+        if (book.bookForEvents.length < 1) {
+          setData((state) => [
+            ...state,
+            {
+              bookImages: book.bookImages[0]?.image,
+              author: book.author,
+              category: book.category?.nameCategory,
+              id: book.id,
+              nameBook: book.nameBook,
+              price: [book.price, book.discount],
+              quantity: book.quantity,
+              review: [book.rating, book.reviews.length],
+            },
+          ]);
+        }
       });
     }
   };
@@ -368,51 +374,134 @@ function Books() {
   const onSearch = () => {
     setSubmitting(true);
 
-    if (booksSearch.keyWord != null) {
-      console.log(booksSearch);
-      if (booksSearch.idCategory == null) setValue(0);
-      else {
-        setValue(booksSearch.idCategory);
-      }
-      //setValue(booksSearch.idCategory);
-      setCategorySearch(booksSearch.idCategory);
-      let bookSearch = {};
-      if (value == 0 && booksSearch.idCategory != null) {
-        bookSearch = {
-          idCategory: booksSearch.idCategory,
-          keyWord: booksSearch.keyWord,
-          minPrice: minPriceSearch,
-          maxPrice: maxPriceSearch,
-        };
-      } else if (value == 0 && booksSearch.idCategory == null) {
-        bookSearch = {
-          idCategory: null,
-          keyWord: booksSearch.keyWord,
-          minPrice: minPriceSearch,
-          maxPrice: maxPriceSearch,
-        };
-      } else {
-        bookSearch = {
-          idCategory: booksSearch.idCategory,
-          keyWord: booksSearch.keyWord,
-          minPrice: minPriceSearch,
-          maxPrice: maxPriceSearch,
-        };
-      }
+    // if (booksSearch.keyWord != null) {
+    //   console.log(booksSearch);
+    //   if (booksSearch.idCategory == null) setValue(0);
+    //   else {
+    //     setValue(booksSearch.idCategory);
+    //   }
+    //   //setValue(booksSearch.idCategory);
+    //   setCategorySearch(booksSearch.idCategory);
+    //   let bookSearch = {};
+    //   if (value == 0 && booksSearch.idCategory != null) {
+    //     bookSearch = {
+    //       idCategory: booksSearch.idCategory,
+    //       keyWord: booksSearch.keyWord,
+    //       minPrice: minPriceSearch,
+    //       maxPrice: maxPriceSearch,
+    //     };
+    //   } else if (value == 0 && booksSearch.idCategory == null) {
+    //     bookSearch = {
+    //       idCategory: null,
+    //       keyWord: booksSearch.keyWord,
+    //       minPrice: minPriceSearch,
+    //       maxPrice: maxPriceSearch,
+    //     };
+    //   } else {
+    //     bookSearch = {
+    //       idCategory: booksSearch.idCategory,
+    //       keyWord: booksSearch.keyWord,
+    //       minPrice: minPriceSearch,
+    //       maxPrice: maxPriceSearch,
+    //     };
+    //   }
 
+    //   httpClient()
+    //     .post(APP_API.booksSearch, bookSearch)
+    //     .then((res) => {
+    //       setBookArray([...res.data]);
+    //       setBooksData(res.data);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     })
+    //     .finally(() => setSubmitting(false));
+    // }
+    httpClient()
+      .get(APP_API.booksCanAddToEvent.replace(":id", id || ""))
+      .then((res) => {
+        setBookArray([...res.data]);
+        setBooksData(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => setSubmitting(false));
+  };
+  const onKeyChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (booksSearch.keyWord != null) {
+      setKeyWordSearch(e.target.value);
+      console.log(booksSearch);
+      dispatch(
+        updateKeySearch({
+          idCategory: booksSearch.idCategory,
+          keyWord: e.target.value,
+          minPrice: 0,
+          maxPrice: 100000000,
+        })
+      );
+    }
+  };
+  const [bookId, setBookId] = useState(0);
+  const { id } = useParams();
+  const [discountPercentValue, setDiscountPercentValue] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const showModal = (bookId: number) => {
+    setBookId(bookId);
+    setVisible(true);
+  };
+
+  const handleOk = () => {
+    if (id) {
       httpClient()
-        .post(APP_API.booksSearch, bookSearch)
+        .post(APP_API.addEventBooks, {
+          eventId: parseInt(id),
+          bookId: bookId,
+          discountPercentValue: discountPercentValue,
+        })
         .then((res) => {
-          setBookArray([...res.data]);
-          setBooksData(res.data);
+          message.success("Thêm vào sự kiện thành công!");
+          console.log(res);
+          onSearch();
+          handleCancel();
         })
         .catch((err) => {
           console.log(err);
-        })
-        .finally(() => setSubmitting(false));
+        });
     }
   };
+  const [eventImage, setEventImage] = useState("");
+  const [detail, setDetail] = useState("");
+  const [dayStart, setDayStart] = useState("");
+  const [dayEnd, setDayEnd] = useState("");
+  const formatDate = (date: string) => {
+    return date.slice(8, 10) + "-" + date.slice(5, 7) + "-" + date.slice(0, 4);
+  };
+  const getEvent = () => {
+    httpClient()
+      .get(APP_API.getEvents)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.length > 0) {
+          res.data.map((event: Event, index: number) => {
+            if (id == event.id.toString()) {
+              setDetail(event.detail);
+              setDayStart(event.dayStart);
+              setDayEnd(event.dayEnd);
+              setEventImage(event.image);
+            }
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const handleCancel = () => {
+    setVisible(false);
+  };
   useEffect(() => {
+    getEvent();
     onSearch();
     setSubmitting(true);
     console.log(keyWordSearch);
@@ -429,10 +518,22 @@ function Books() {
   }, [booksSearch]);
   return (
     <Spin spinning={submitting}>
-      <div className="bg-white pl-4 pr-4 pt-4 pb-3" style={{ width: "1220px" }}>
-        <h3 style={{ color: "#555555", fontFamily: "Helvetica" }}>
-          Quản Lý Sản Phẩm
+      <div className="bg-white pl-4 pr-4 pt-4" style={{ width: "1220px" }}>
+        <h3 style={{ color: "	#FF6666", fontFamily: "Helvetica" }}>
+          {
+            <img
+              src={EventIcon}
+              height={30}
+              width={30}
+              style={{ objectFit: "cover" }}
+            ></img>
+          }
+          &nbsp;Thêm Sản Phẩm Vào {detail} ({formatDate(dayStart)} tới{" "}
+          {formatDate(dayEnd)})
         </h3>
+        <div className="d-flex justify-content-center align-items-center mt-3 mb-3">
+          <Image height={300} src={eventImage}></Image>
+        </div>
         <div className="d-flex justify-content-between">
           <div className="d-flex mb-3">
             <div className="mr-2 ">
@@ -504,6 +605,19 @@ function Books() {
                 </Option>
               </Select>
             </div>
+            <div className="mr-2">
+              <p className="font-cate-title  mb-1">
+                <FontAwesomeIcon
+                  className="mr-2"
+                  icon={faSearch}
+                  color="#0099CC"
+                />
+                Tìm Kiếm:
+              </p>
+              <div style={{ minWidth: "300px" }}>
+                <Search placeholder="Tìm sách..." onChange={onKeyChange} />
+              </div>
+            </div>
           </div>{" "}
           <div className="mr-2">
             <p className="font-cate-title  mb-1">
@@ -534,11 +648,11 @@ function Books() {
             </Select>
           </div>
         </div>
-        <div className="bg-white ">
+        <div
+          className="bg-white"
+          style={{ border: "1px solid rgba(0,0,0,.125)" }}
+        >
           <Table
-            style={{
-              border: "1px solid rgba(0,0,0,.125)",
-            }}
             columns={columns}
             dataSource={data}
             scroll={{ x: true, y: 430 }}
@@ -546,8 +660,49 @@ function Books() {
           />
         </div>
       </div>
+      <Modal
+        visible={visible}
+        title="Đưa vào sự kiện"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <div className="d-flex justify-content-between">
+            ,
+            <div style={{ marginLeft: "40%" }}>
+              <Button key="back" onClick={handleCancel}>
+                Hủy
+              </Button>
+              ,
+              <Button key="submit" type="primary" onClick={handleOk}>
+                Lưu
+              </Button>
+            </div>
+            ,
+          </div>,
+        ]}
+      >
+        <div style={{}}>
+          <span
+            style={{
+              fontSize: 16,
+
+              color: "#555555",
+            }}
+          >
+            Giảm Giá (%):
+          </span>
+        </div>
+
+        <Input
+          type="number"
+          style={{}}
+          onChange={(e) => {
+            setDiscountPercentValue(parseInt(e.target.value));
+          }}
+        />
+      </Modal>
     </Spin>
   );
 }
 
-export default Books;
+export default AddBooksToEvent;

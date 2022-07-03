@@ -9,9 +9,13 @@ function App() {
   const isAuth = useSelector((state: RootStateOrAny) => {
     return state.authSlice.isAuth;
   });
+  const isAdmin = useSelector((state: RootStateOrAny) => {
+    return state.authSlice.isAdmin;
+  });
+
   return (
     <BrowserRouter>
-      {renderAppComponent(appComponentConfig, isAuth)}
+      {renderAppComponent(appComponentConfig, isAuth, isAdmin)}
     </BrowserRouter>
   );
 }

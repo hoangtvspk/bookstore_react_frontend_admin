@@ -10,31 +10,24 @@ import { UserInfo } from "../../models/user";
 import { adminRoutes } from "../../routes/routes";
 import "./User.css";
 
-function Users() {
+function Employee() {
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-  const stringPrice = (number: number) => {
-    const newNumber = number.toLocaleString(undefined, {
-      maximumFractionDigits: 2,
-    });
-    console.log(newNumber);
-    return newNumber;
-  };
 
   const [usersArray, setUsersArray] = useState<User[]>([]);
 
   const onEdit = (id: string) => {
-    navigate(adminRoutes.editUsers.replace(":id", id));
+    navigate(adminRoutes.editEmployees.replace(":id", id));
   };
 
   const onDelete = (id: string) => {
     setSubmitting(true);
     httpClient()
-      .delete(APP_API.deleteUsers.replace(":id", id))
+      .delete(APP_API.deleteEmployees.replace(":id", id))
       .then((res) => {
         console.log(res);
         message.success("Xóa Thành Công!");
-        navigate(adminRoutes.users);
+
         onLoad();
       })
       .catch((err) => {
@@ -124,7 +117,7 @@ function Users() {
     setData([]);
     setSubmitting(true);
     httpClient()
-      .get(APP_API.users)
+      .get(APP_API.employees)
       .then((res) => {
         console.log(res);
         setUsersArray([...res.data]);
@@ -155,7 +148,7 @@ function Users() {
     <Spin spinning={submitting}>
       <div className="bg-white pt-4 pb-4 pr-5 pl-5">
         <h3 style={{ color: "#555555", fontFamily: "Helvetica" }}>
-          Quản Lý Người Dùng
+          Quản Lý Nhân Viên
         </h3>
         <Table
           columns={columns}
@@ -168,4 +161,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Employee;

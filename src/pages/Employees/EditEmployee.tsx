@@ -1,18 +1,15 @@
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Form, Input, message, Select, Spin, Image } from "antd";
+import { Button, Form, Input, message, Image, Spin } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { ChangeEvent, useEffect, useState } from "react";
 import ImageUploading, { ImageListType } from "react-images-uploading";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import PageTitle from "../../components/PageTitle/PageTitle";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
-import { AddBookForm } from "../../models/addBook";
 import { Category } from "../../models/book";
 import { adminRoutes } from "../../routes/routes";
-import "./Categories";
+
+import "./User.css";
 
 const layout = {
   labelCol: { span: 8 },
@@ -23,68 +20,116 @@ const layout = {
 
 /* eslint-enable no-template-curly-in-string */
 
-const AddCategories = () => {
-  const [submitting, setSubmitting] = useState(false);
-  const [nameCategory, setName] = useState("");
-  const nameInputChange = (
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
-  ): void => {
-    setName(event.target.value);
+const EditEmployee = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const firstNameInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setFirstName(event.target.value);
   };
+  const lastNameInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setLastName(event.target.value);
+  };
+
+  const emailInputChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setEmail(event.target.value);
+  };
+  const phoneNumberInputChange = (
+    event: ChangeEvent<HTMLInputElement>
+  ): void => {
+    setPhoneNumber(event.target.value);
+  };
+  const [submitting, setSubmitting] = useState(false);
   const [images, setImages] = useState([] as ImageListType);
+  const [currentedImage, setCurrentedImages] = useState([] as ImageListType);
   const maxNumber = 1;
-  const imageList2 = [];
+  const navigate = useNavigate();
+
   const onChange = (
     imageList: ImageListType,
     addUpdateIndex: number[] | undefined
   ) => {
     // data for submit
     console.log(imageList, addUpdateIndex);
-    for (let i = 0; i < imageList.length; i++) {
-      imageList2.push(imageList[i].file);
-    }
+
     setImages(imageList);
     // setFile1(imageList[0].file);
   };
+
   const onFinish = (values: any) => {
-    console.log(values);
     const formData: FormData = new FormData();
     formData.append(
-      "category",
+      "user",
       new Blob(
         [
           JSON.stringify({
-            nameCategory,
+            id,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            currentedImage: currentedImage[0].dataURL,
           }),
         ],
         { type: "application/json" }
       )
     );
-    console.log(images);
-    for (let i = 0; i < images.length; i++) {
-      console.log(images[i]);
-      formData.append("file", images[i].file as string | Blob);
-    }
+    if (images.length > 0)
+      for (let i = 0; i < images.length; i++) {
+        console.log(images[i]);
+        formData.append("file", images[i].file as string | Blob);
+      }
+
+    console.log(values);
     setSubmitting(true);
     httpClient()
-      .post(APP_API.addCategory, formData)
+      .post(APP_API.editEmployees, formData)
       .then((res) => {
         console.log(res);
-        message.success("Thêm Thể Loại Mới Thành Công!");
+        message.success("Cập Nhật Người Dùng Thành Công");
+        navigate(adminRoutes.employees);
+        window.scroll(0, 0);
       })
       .catch((err) => {
         console.error(err);
-        message.error("Thêm Thất Bại!");
+        message.error("Cập Nhật Người Dùng Thất Bại");
       })
       .finally(() => setSubmitting(false));
   };
+  const [userForm] = useForm();
+  const { id } = useParams();
+  useEffect(() => {
+    if (id) {
+      httpClient()
+        .get(APP_API.getEmployee.replace(":id", id))
+        .then((res) => {
+          console.log(res);
+          userForm.setFieldsValue(res.data);
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
+          setEmail(res.data.email);
+          setPhoneNumber(res.data.phoneNumber);
+          setImages([{ dataURL: res.data.image }]);
+          setCurrentedImages([{ dataURL: res.data.image }]);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, []);
 
   return (
     <Spin spinning={submitting}>
       <div className="address-background bg-white rounded-3">
-        <PageTitle>Thêm Danh Mục</PageTitle>
+        <PageTitle>Thêm Người Dùng</PageTitle>
 
-        <Form {...layout} name="nest-messages" onFinish={onFinish}>
+        <Form
+          {...layout}
+          form={userForm}
+          name="nest-messages"
+          onFinish={onFinish}
+        >
           <div className="site-layout-background d-flex align-items-center ">
             <div style={{ marginLeft: "200px" }}>
               <div style={{ width: "800px" }}>
@@ -95,22 +140,90 @@ const AddCategories = () => {
                     color: "#555555",
                   }}
                 >
-                  Tên Thể Loại:
+                  Họ:
                 </span>
               </div>
               <Form.Item
                 className="form-item "
-                name="nameBook"
-                rules={[{ required: true, message: "Nhập Tên Danh Mục" }]}
+                name="lastName"
+                rules={[{ required: true, message: "Nhập Tên" }]}
               >
                 <Input
                   style={{ width: "800px" }}
                   onChange={(e) => {
-                    nameInputChange(e);
+                    lastNameInputChange(e);
                   }}
                 />
               </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
 
+                    color: "#555555",
+                  }}
+                >
+                  Tên:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="firstName"
+                rules={[{ required: true, message: "Nhập Tên" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    firstNameInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
+
+                    color: "#555555",
+                  }}
+                >
+                  Email:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="email"
+                rules={[{ required: true, message: "Nhập Tên" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    emailInputChange(e);
+                  }}
+                />
+              </Form.Item>
+              <div style={{ width: "800px" }}>
+                <span
+                  style={{
+                    fontSize: 16,
+
+                    color: "#555555",
+                  }}
+                >
+                  Số Điện Thoại:
+                </span>
+              </div>
+              <Form.Item
+                className="form-item "
+                name="phoneNumber"
+                rules={[{ required: true, message: "Nhập Mật Khẩu" }]}
+              >
+                <Input
+                  style={{ width: "800px" }}
+                  onChange={(e) => {
+                    phoneNumberInputChange(e);
+                  }}
+                />
+              </Form.Item>
               <span
                 style={{
                   fontSize: 16,
@@ -202,4 +315,4 @@ const AddCategories = () => {
   );
 };
 
-export default AddCategories;
+export default EditEmployee;
