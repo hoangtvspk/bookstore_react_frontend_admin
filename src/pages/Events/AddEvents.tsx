@@ -44,7 +44,9 @@ const AddEvents = () => {
   const [detail, setDetail] = useState("");
   const [dayStart, setDayStart] = useState("");
   const [dayEnd, setDayEnd] = useState("");
-
+  const formatDateRequest = (date: string) => {
+    return date.slice(6, 10) + "-" + date.slice(3, 5) + "-" + date.slice(0, 2);
+  };
   const nameInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
   ): void => {
@@ -172,14 +174,20 @@ const AddEvents = () => {
                 </span>
               </div>
               <RangePicker
-                format="YYYY-MM-DD"
+                format="DD-MM-YYYY"
                 style={{ width: "800px" }}
                 picker="week"
                 onChange={(value, formatString) => {
                   console.log(value?.[0]);
-                  console.log(formatString[0] + "T00:00:00.511Z");
-                  setDayStart(formatString[0] + "T00:00:00.511Z");
-                  setDayEnd(formatString[1] + "T23:59:59.511Z");
+                  console.log(
+                    formatDateRequest(formatString[0]) + "T00:00:00.511Z"
+                  );
+                  setDayStart(
+                    formatDateRequest(formatString[0]) + "T00:00:00.000Z"
+                  );
+                  setDayEnd(
+                    formatDateRequest(formatString[1]) + "T23:59:59.000Z"
+                  );
                 }}
               />
 

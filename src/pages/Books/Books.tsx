@@ -61,19 +61,17 @@ function Books() {
   });
 
   const onDelete = (id: string) => {
-    setSubmitting(true);
     httpClient()
       .delete(APP_API.deleteBook.replace(":id", id))
       .then((res) => {
         console.log(res);
-        message.success("Delete Successfully");
+        message.success("Xóa Thành Công");
         navigate(adminRoutes.books);
-        onLoad();
+        onSearch();
       })
       .catch((err) => {
         console.error(err);
-      })
-      .finally(() => setSubmitting(false));
+      });
   };
   interface DataType {
     bookImages: string;
@@ -160,12 +158,12 @@ function Books() {
           </u>
           <p className="action-item-slice"> | </p>
           <Popconfirm
-            title="Are you sure to delete this book?"
+            title="Bạn Muốn Xóa Sản Phẩm Này?"
             onConfirm={() => {
               onDelete(id.toString());
             }}
-            okText="Yes"
-            cancelText="No"
+            okText="Xóa"
+            cancelText="Hủy"
           >
             <u className="book-action-item">Xóa</u>
           </Popconfirm>

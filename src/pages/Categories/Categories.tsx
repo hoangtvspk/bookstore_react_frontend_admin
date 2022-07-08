@@ -26,7 +26,7 @@ function Categories() {
       .delete(APP_API.deleteCategory.replace(":id", id))
       .then((res) => {
         console.log(res);
-        message.success("Delete Successfully");
+        message.success("Xóa Thành Công!");
         navigate(adminRoutes.categories);
         onLoad();
       })
@@ -74,7 +74,7 @@ function Categories() {
           </u>
           <p className="action-item-slice"> | </p>
           <Popconfirm
-            title="Are you sure to delete this book?"
+            title="Bạn Muốn Xóa Danh Mục Này?"
             onConfirm={() => {
               onDelete(id.toString());
             }}

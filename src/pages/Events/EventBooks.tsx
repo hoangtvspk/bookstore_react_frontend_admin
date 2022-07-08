@@ -19,6 +19,9 @@ import {
   Input,
   Modal,
   Form,
+  RadioChangeEvent,
+  Radio,
+  Space,
 } from "antd";
 import { SelectValue } from "antd/lib/select";
 import Table, { ColumnsType } from "antd/lib/table";
@@ -46,6 +49,9 @@ function EventBooks() {
     });
 
     return newNumber;
+  };
+  const formatDateRequest = (date: string) => {
+    return date.slice(6, 10) + "-" + date.slice(3, 5) + "-" + date.slice(0, 2);
   };
   const onEdit = (id: string) => {
     navigate(adminRoutes.bookEdit.replace(":id", id));
@@ -169,12 +175,12 @@ function EventBooks() {
     {
       title: "Sửa/Xóa",
       key: "action",
-      render: (_, { id }) => (
+      render: (_, { id, price }) => (
         <div className="d-flex ">
           <u
             className="book-action-item pl-0 ml-0"
             onClick={() => {
-              showModal(id);
+              showModal(id, price[0]);
             }}
           >
             Sửa
@@ -224,9 +230,13 @@ function EventBooks() {
     }
   };
   const [bookId, setBookId] = useState(0);
-  const [discountPercentValue, setDiscountPercentValue] = useState(0);
+  const [discountValue, setDiscountPercentValue] = useState(0);
   const [visible, setVisible] = useState(false);
-  const showModal = (bookId: number) => {
+  const [bookPrice, setBookPrice] = useState(0);
+  const [unit, setUnit] = useState("%");
+  const showModal = (bookId: number, price: number) => {
+    setBookId(bookId);
+    setBookPrice(price);
     setBookId(bookId);
     if (id) {
       httpClient()
@@ -247,15 +257,42 @@ function EventBooks() {
         .finally(() => setSubmitting(false));
     }
   };
-
-  const handleOk = () => {
+  const [discountType, setDisCountType] = useState("percent");
+  const setDataRequestValue = (type: string, discountValue: number) => {
     if (id) {
-      httpClient()
-        .put(APP_API.editEventBooks, {
+      if (type == "percent") {
+        setUnit("%");
+        setDataRequest({
           eventId: parseInt(id),
           bookId: bookId,
-          discountPercentValue: discountPercentValue,
-        })
+          discountPercentValue: discountValue,
+        });
+      } else if (type == "number") {
+        setUnit("VNĐ");
+        setDataRequest({
+          eventId: parseInt(id),
+          bookId: bookId,
+          discountValue: discountValue,
+        });
+      } else if (type == "newPrice") {
+        setUnit("VNĐ");
+        setDataRequest({
+          eventId: parseInt(id),
+          bookId: bookId,
+          discountValue: bookPrice - discountValue,
+        });
+      }
+    }
+  };
+  const onSelectDiscountTypeChange = (e: RadioChangeEvent) => {
+    setDisCountType(e.target.value);
+    setDataRequestValue(e.target.value, discountValue);
+  };
+  const [dataRequest, setDataRequest] = useState({});
+  const handleOk = () => {
+    if (id && discountValue > 0) {
+      httpClient()
+        .put(APP_API.editEventBooks, dataRequest)
         .then((res) => {
           message.success("Thêm vào sự kiện thành công!");
           console.log(res);
@@ -267,6 +304,8 @@ function EventBooks() {
         .catch((err) => {
           console.log(err);
         });
+    } else {
+      message.error("Ưu Đãi Phải Lớn Hơn 0!");
     }
   };
   const handleCancel = () => {
@@ -405,7 +444,7 @@ function EventBooks() {
           onOk={handleOk}
           onCancel={handleCancel}
           footer={[
-            <div className="d-flex justify-content-between">
+            <div className="d-flex justify-content-end">
               ,
               <div style={{ marginLeft: "40%" }}>
                 <Button key="back" onClick={handleCancel}>
@@ -420,32 +459,85 @@ function EventBooks() {
             </div>,
           ]}
         >
-          <div style={{}}>
-            <span
-              style={{
-                fontSize: 16,
-
-                color: "#555555",
-              }}
+          <div className="d-flex justify-content-center">
+            <Radio.Group
+              className="mt-3 mb-3"
+              key="price"
+              onChange={onSelectDiscountTypeChange}
+              value={discountType}
             >
-              Giảm Giá (%):
-            </span>
-          </div>
-          <Form>
-            <Form.Item
-              name="discountPercentValue"
-              rules={[{ required: true, message: "Nhập password!" }]}
-            >
-              <Input
-                type="number"
-                defaultValue={discountPercentValue}
-                style={{}}
-                onChange={(e) => {
-                  setDiscountPercentValue(parseInt(e.target.value));
+              <Space
+                direction="horizontal"
+                style={{
+                  gap: "0px",
                 }}
-              />
-            </Form.Item>
-          </Form>
+              >
+                <Radio value="percent" className="font-cate">
+                  <p
+                    style={{
+                      color: "#111111",
+                      fontSize: "14px",
+
+                      marginBottom: 0,
+                    }}
+                  >
+                    Theo %
+                  </p>
+                </Radio>
+                <Radio value="number" className="font-cate">
+                  <p
+                    style={{
+                      color: "#111111",
+                      fontSize: "14px",
+
+                      marginBottom: 0,
+                    }}
+                  >
+                    Theo số tiền
+                  </p>
+                </Radio>
+                <Radio value="newPrice" className="font-cate">
+                  <p
+                    style={{
+                      color: "#111111",
+                      fontSize: "14px",
+
+                      marginBottom: 0,
+                    }}
+                  >
+                    Giá Cụ Thể
+                  </p>
+                </Radio>
+              </Space>
+            </Radio.Group>
+          </div>
+          <div className="d-flex justify-content-center">
+            <Form>
+              <Form.Item
+                name="discountPercentValue"
+                style={{ fontSize: "16px", width: "140px" }}
+                rules={[{ required: true, message: "Nhập Ưu Đãi!" }]}
+              >
+                <div className="d-flex pb-0 align-items-center">
+                  <Input
+                    className="mr-1"
+                    type="number"
+                    defaultValue={discountValue}
+                    style={{}}
+                    onChange={(e) => {
+                      setDiscountPercentValue(parseInt(e.target.value));
+                      setDataRequestValue(
+                        discountType,
+                        parseInt(e.target.value)
+                      );
+                    }}
+                    value={discountValue}
+                  />{" "}
+                  ({unit})
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
         </Modal>
       )}
     </Spin>

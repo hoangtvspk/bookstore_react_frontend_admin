@@ -49,26 +49,7 @@ function OrderList({ orderArray, loadPage, status }: OrderProps) {
   const [checkedOrders, setCheckedOrders] = useState<number[]>([]);
 
   const [disable, setDisable] = useState(true);
-  // const onChange = (checkedValues: CheckboxValueType[]) => {
-  //   if (checkedValues.length > 0) setDisable(false);
-  //   else setDisable(true);
-  //   setCheckedList(checkedValues);
-  //   setIndeterminate(
-  //     !!checkedValues.length && checkedValues.length < allOrders.length
-  //   );
-  //   setCheckAll(checkedValues.length === allOrders.length);
 
-  //   // console.log(status);
-  //   // console.log(orderArray);
-  //   setCheckedOrders([]);
-  //   // console.log("checked = ", status, checkedValues);
-  //   checkedValues.map((checkedvalue: CheckboxValueType) => {
-  //     setCheckedOrders((state) => [
-  //       ...state,
-  //       parseInt(checkedvalue.toString()),
-  //     ]);
-  //   });
-  // };
   const onCheckChange = (e: CheckboxChangeEvent) => {
     if (checkedOrders.length > 0) setDisable(false);
     else setDisable(true);

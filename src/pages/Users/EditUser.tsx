@@ -122,7 +122,7 @@ const AddUsers = () => {
   return (
     <Spin spinning={submitting}>
       <div className="address-background bg-white rounded-3">
-        <PageTitle>Thêm Người Dùng</PageTitle>
+        <PageTitle>Cập Nhật Người Dùng</PageTitle>
 
         <Form
           {...layout}

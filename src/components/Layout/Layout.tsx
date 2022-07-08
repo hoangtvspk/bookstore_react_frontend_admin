@@ -20,6 +20,8 @@ import Employees from "../../Image/employee.png";
 import EventIcon from "../../Image/event.png";
 import LogOutIcon from "../../Image/logout.png";
 import OrderIcon from "../../Image/order.png";
+import VoucherIcon from "../../Image/voucher.png";
+import MessIcon from "../../Image/messenger.png";
 import SideBarBackGround from "../../Image/sidebarbackground.png";
 import { UserInfo } from "../../models/auth";
 import { userLogOut } from "../../redux/slices/authSlice";
@@ -155,6 +157,19 @@ const AppLayout: React.FC = ({ children }) => {
       case "employeesListAdd":
         setOpenKey(["employees"]);
         setMyLocation("Nhân Viên");
+        break;
+      case "vouchers":
+        setOpenKey(["voucher"]);
+        setMyLocation("Vouchers");
+        break;
+      case "editVouchers":
+        setSelectedMenu("employeesList");
+        setOpenKey(["voucher"]);
+        setMyLocation("Vouchers");
+        break;
+      case "addVouchers":
+        setOpenKey(["voucher"]);
+        setMyLocation("Vouchers");
         break;
       default:
         setOpenKey([]);
@@ -476,7 +491,7 @@ const AppLayout: React.FC = ({ children }) => {
                 }}
               >
                 {" "}
-                <Link to={adminRoutes.events}>Đang Diễn Ra</Link>
+                <Link to={adminRoutes.events}>Danh Sách</Link>
               </Menu.Item>
               <Menu.Item
                 key="addEvent"
@@ -491,6 +506,79 @@ const AppLayout: React.FC = ({ children }) => {
                 <Link to={adminRoutes.addEvents}>Thêm</Link>
               </Menu.Item>
             </SubMenu>
+            <SubMenu
+              key="voucher"
+              icon={
+                <>
+                  {
+                    <img
+                      src={VoucherIcon}
+                      height={30}
+                      width={30}
+                      style={{ objectFit: "cover" }}
+                    ></img>
+                  }
+                  &nbsp; &nbsp;
+                </>
+              }
+              title="Voucher"
+              onTitleClick={() => {
+                if (openKey.includes("voucher"))
+                  setOpenKey(openKey.filter((item) => item !== "voucher"));
+                else setOpenKey((state) => [...state, "voucher"]);
+              }}
+            >
+              <Menu.Item
+                key="vouchers"
+                style={{ paddingLeft: "60px" }}
+                icon={<UnorderedListOutlined />}
+                onClick={() => {
+                  setSelectedMenu("vouchers");
+                  window.scroll(0, 0);
+                  setMyLocation("Voucher");
+                }}
+              >
+                {" "}
+                <Link to={adminRoutes.voucher}>Danh Sách</Link>
+              </Menu.Item>
+              <Menu.Item
+                key="addVouchers"
+                style={{ paddingLeft: "60px" }}
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setSelectedMenu("addVouchers");
+                  window.scroll(0, 0);
+                  setMyLocation("Voucher");
+                }}
+              >
+                <Link to={adminRoutes.addVoucher}>Thêm</Link>
+              </Menu.Item>
+            </SubMenu>
+            <Menu.Item
+              key="messenger"
+              icon={
+                <>
+                  {
+                    <img
+                      src={MessIcon}
+                      height={30}
+                      width={30}
+                      style={{ objectFit: "cover" }}
+                    ></img>
+                  }
+                  &nbsp; &nbsp;
+                </>
+              }
+            >
+              <p
+                onClick={() =>
+                  window.open("https://business.facebook.com/latest/inbox/all")
+                }
+                style={{ marginBottom: "0px" }}
+              >
+                Tin Nhắn
+              </p>
+            </Menu.Item>
             <Menu.Item
               key="logout"
               icon={
@@ -500,7 +588,7 @@ const AppLayout: React.FC = ({ children }) => {
                       src={LogOutIcon}
                       height={30}
                       width={30}
-                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                      style={{ objectFit: "cover" }}
                     ></img>
                   }
                   &nbsp; &nbsp;
@@ -611,6 +699,7 @@ const AppLayout: React.FC = ({ children }) => {
                     Thông Tin Cá Nhân
                   </Link>
                 </Menu.Item>
+
                 <Divider className="m-0" />
                 <Menu.Item key="logout" onClick={() => dispatch(userLogOut())}>
                   <FontAwesomeIcon

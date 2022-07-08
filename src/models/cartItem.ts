@@ -24,5 +24,6 @@ export interface CartItem{
         ],
         reviews: string,
         rating: number
-    }
+    },
+    total: number
 }

@@ -22,7 +22,7 @@ const Login = () => {
         const userInfo: UserInfo = res.data as UserInfo;
         dispatch(userLogIn(userInfo));
         navigate(adminRoutes.home);
-        message.success("Log In Successfully");
+        message.success("Đăng Nhập Thành Công");
       })
       .catch((err) => {
         console.error(err);

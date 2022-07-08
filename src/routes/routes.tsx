@@ -26,6 +26,9 @@ import AddEvents from "../pages/Events/AddEvents";
 import EditEvents from "../pages/Events/EditEvents";
 import EventBooks from "../pages/Events/EventBooks";
 import AddBooksToEvent from "../pages/Events/AddBooksToEvent";
+import VoucherList from "../pages/Vouchers/Vouchers";
+import AddVoucher from "../pages/Vouchers/AddVoucher";
+import EditVoucher from "../pages/Vouchers/EditVoucher";
 
 export const adminRoutes = {
   login: "/login",
@@ -54,6 +57,9 @@ export const adminRoutes = {
   editEvents: "/editEvent/:id",
   eventBooks: "/eventBooks/:id",
   addBookToEvent: "/addBooksToEvent/:id",
+  voucher: "/vouchers",
+  addVoucher: "/addVouchers",
+  editVoucher: "/editVouchers/:id",
 };
 
 interface IAppComponentConfig {
@@ -169,6 +175,18 @@ export const appComponentConfig: IAppComponentConfig[] = [
   {
     path: adminRoutes.addBookToEvent,
     component: <AddBooksToEvent />,
+  },
+  {
+    path: adminRoutes.voucher,
+    component: <VoucherList />,
+  },
+  {
+    path: adminRoutes.addVoucher,
+    component: <AddVoucher />,
+  },
+  {
+    path: adminRoutes.editVoucher,
+    component: <EditVoucher />,
   },
 ];
 

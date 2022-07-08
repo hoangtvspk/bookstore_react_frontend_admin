@@ -6,5 +6,6 @@ export interface Event{
     dayStart: string,
     dayEnd: string,
     detail: string,
-    bookForEvents: EventBooksModel
+    bookForEvents: EventBooksModel,
+    status: string,
 }

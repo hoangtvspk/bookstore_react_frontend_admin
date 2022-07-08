@@ -1,3 +1,6 @@
+import { CartItem } from "./cartItem"
+import { Voucher } from "./voucher"
+
 export interface Cart{
     id: {
         orderId:number,
@@ -37,5 +40,6 @@ export interface GetOrder{
     date: string,
     totalPrice: number,
     status: string,
-    orderItems:[Cart ]
+    orderItems:[CartItem]
+    coupon: Voucher
 }

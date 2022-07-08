@@ -95,7 +95,7 @@ function Employee() {
           </u>
           <p className="action-item-slice"> | </p>
           <Popconfirm
-            title="Bạn muốn xóa người dùng này?"
+            title="Bạn muốn xóa nhân viên này?"
             onConfirm={() => {
               onDelete(id.toString());
             }}

@@ -53,7 +53,7 @@ const UpdatePassword = () => {
   return (
     <Spin spinning={submitting}>
       <div className="profile-background">
-        <PageTitle>Edit Password</PageTitle>
+        <PageTitle>Cập Nhật Mật Khẩu</PageTitle>
         <div
           className="site-layout-background d-flex align-items-center justify-content-center"
           // style={{ background: "red" }}
@@ -69,44 +69,39 @@ const UpdatePassword = () => {
             autoComplete="off"
             className="menu-background"
             form={updatePassForm}
+            style={{ width: "500px" }}
           >
             <Form.Item
               label="Password"
               name="password"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
+              rules={[{ required: true, message: "Nhập Mật Khẩu Cũ!" }]}
             >
               <Input className="w-100" />
             </Form.Item>
             <Form.Item
-              label="New Password"
+              label="Mật Khẩu Mới"
               name="newPassword"
-              rules={[
-                { required: true, message: "Please input your password!" },
-              ]}
+              rules={[{ required: true, message: "Nhập Mật Khẩu Mới!" }]}
             >
               <Input className="w-100" />
             </Form.Item>
             <Form.Item
-              label="Confirm Password"
+              label="Xác nhận Mật Khẩu"
               name="newPassword2"
-              rules={[
-                { required: true, message: "Please input confirm password!" },
-              ]}
+              rules={[{ required: true, message: "Xác Nhận Mật Khẩu!" }]}
             >
               <Input className="w-100" />
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
-                Reset your password
+                Thay Đổi Mật Khẩu
               </Button>
             </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Link to={adminRoutes.myAccount}>
                 <FontAwesomeIcon className="mr-2" icon={faArrowLeft} />
-                Turn Back
+                Quay lại
               </Link>
             </Form.Item>
           </Form>

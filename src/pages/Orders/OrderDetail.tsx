@@ -172,7 +172,44 @@ function OrderDetail() {
           {order.orderItems?.length} sản phẩm:
         </p>
         <OrderItems order={order}></OrderItems>
-
+        <div className="d-flex justify-content-end">
+          <div>
+            <p
+              style={{
+                fontSize: "14px",
+                paddingTop: "0px",
+                marginBottom: 0,
+                color: "	#555555",
+              }}
+            >
+              Phí Vận Chuyển: 0đ
+            </p>
+            {order.coupon?.discountPercentValue && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  paddingTop: "0px",
+                  marginBottom: 0,
+                  color: "	#555555",
+                }}
+              >
+                Voucher: -{order.coupon.discountPercentValue}%
+              </p>
+            )}
+            {order.coupon?.discountValue && (
+              <p
+                style={{
+                  fontSize: "14px",
+                  paddingTop: "0px",
+                  marginBottom: 0,
+                  color: "	#555555",
+                }}
+              >
+                Voucher: -{order.coupon.discountValue}đ
+              </p>
+            )}
+          </div>
+        </div>
         <div className="purchase-order-total-layout">
           <div className="purchase-order-total-layout-border">
             <p className="purchase-order-total-title">

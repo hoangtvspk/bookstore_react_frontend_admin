@@ -127,7 +127,7 @@ const AddBooks = () => {
       })
       .then((res) => {
         message.success("Thêm Sản Phẩm Thành Công!");
-        navigate(adminRoutes.books);
+        // navigate(adminRoutes.books);
       })
       .catch((err) => {
         message.error("Thêm Sản Phẩm Thất Bại!");

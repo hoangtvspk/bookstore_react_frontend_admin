@@ -307,6 +307,10 @@ const MyAccount = () => {
                 Lưu Thay Đổi
               </Button>
             </Form.Item>
+
+            <Form.Item>
+              <Link to={adminRoutes.updatePassword}>Cập Nhật Mật Khẩu</Link>
+            </Form.Item>
           </Form>
         </div>
       </div>

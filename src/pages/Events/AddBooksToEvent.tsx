@@ -1,5 +1,4 @@
 import {
-  faBookmark,
   faBookOpen,
   faMoneyCheck,
   faSearch,
@@ -9,14 +8,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Button,
   Form,
+  Image,
   Input,
   message,
   Modal,
-  Popconfirm,
+  Radio,
+  RadioChangeEvent,
   Select,
+  Space,
   Spin,
-  Image,
 } from "antd";
+import Search from "antd/lib/input/Search";
 import { SelectValue } from "antd/lib/select";
 import Table, { ColumnsType } from "antd/lib/table";
 import { ChangeEvent, useEffect, useState } from "react";
@@ -24,13 +26,12 @@ import { RootStateOrAny, useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
+import EventIcon from "../../Image/event.png";
 import { Book, Category } from "../../models/book";
 import { Event } from "../../models/event";
-import { updateKeySearch } from "../../redux/slices/keySearchSlice";
+import { updateAddEventKeySearch } from "../../redux/slices/keySearchSlice";
 import { adminRoutes } from "../../routes/routes";
 import "./Events.css";
-import EventIcon from "../../Image/event.png";
-import Search from "antd/lib/input/Search";
 
 function AddBooksToEvent() {
   const [submitting, setSubmitting] = useState(false);
@@ -43,52 +44,19 @@ function AddBooksToEvent() {
 
     return newNumber;
   };
-  const onEdit = (id: string) => {
-    navigate(adminRoutes.bookEdit.replace(":id", id));
-  };
 
-  const onLoad = () => {
-    httpClient()
-      .get("/books")
-      .then((res) => {
-        console.log(res);
-        setBookArray(res.data);
-        console.log(bookArrray);
-      })
-      .catch((err) => {
-        console.log(err);
-        message.error(err.response.data);
-      });
-  };
+  const [value, setValue] = useState(0 as SelectValue);
 
-  const [bookArrray, setBookArray] = useState<Book[]>([]);
-  const [value, setValue] = useState(0);
-  const [priceValue, setPriceValue] = useState("all");
   const { Option } = Select;
   const [categoryArray, setCategoryArray] = useState<Category[]>([]);
-  const [categorySearch, setCategorySearch] = useState(0);
+
   const [keyWordSearch, setKeyWordSearch] = useState("");
   const [maxPriceSearch, setMaxPriceSearch] = useState(10000000);
   const [minPriceSearch, setMinPriceSearch] = useState(0);
-  const booksSearch = useSelector((state: RootStateOrAny) => {
-    return state.keySearchSlice.booksSearch;
+  const booksAddEventSearch = useSelector((state: RootStateOrAny) => {
+    return state.keySearchSlice.booksAddEventSearch;
   });
 
-  const onDelete = (id: string) => {
-    setSubmitting(true);
-    httpClient()
-      .delete(APP_API.deleteBook.replace(":id", id))
-      .then((res) => {
-        console.log(res);
-        message.success("Delete Successfully");
-        navigate(adminRoutes.books);
-        onLoad();
-      })
-      .catch((err) => {
-        console.error(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
   interface DataType {
     bookImages: string;
     nameBook: string;
@@ -162,12 +130,12 @@ function AddBooksToEvent() {
     {
       title: "Tùy Chọn",
       key: "action",
-      render: (_, { id }) => (
+      render: (_, { id, price }) => (
         <div className="d-flex ">
           <u
             className="book-action-item pl-0 ml-0"
             onClick={() => {
-              showModal(id);
+              showModal(id, price[0]);
             }}
           >
             Đưa Vào Sự Kiện
@@ -182,187 +150,135 @@ function AddBooksToEvent() {
     if (bookList.length > 0) {
       setData([]);
       bookList.map((book: Book) => {
-        if (book.bookForEvents.length < 1) {
-          setData((state) => [
-            ...state,
-            {
-              bookImages: book.bookImages[0]?.image,
-              author: book.author,
-              category: book.category?.nameCategory,
-              id: book.id,
-              nameBook: book.nameBook,
-              price: [book.price, book.discount],
-              quantity: book.quantity,
-              review: [book.rating, book.reviews.length],
-            },
-          ]);
-        }
+        setData((state) => [
+          ...state,
+          {
+            bookImages: book.bookImages[0]?.image,
+            author: book.author,
+            category: book.category?.nameCategory,
+            id: book.id,
+            nameBook: book.nameBook,
+            price: [book.price, book.discount],
+            quantity: book.quantity,
+            review: [book.rating, book.reviews.length],
+          },
+        ]);
       });
     }
   };
-  const getFavouriteBook = () => {
-    setSubmitting(true);
-    httpClient()
-      .get("books")
-      .then((res) => {
-        setBooksData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
-  const getNewBook = () => {
-    setSubmitting(true);
-    httpClient()
-      .get(APP_API.newBook)
-      .then((res) => {
-        setBooksData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
-  const getBestSellingBook = () => {
-    setSubmitting(true);
-    httpClient()
-      .get(APP_API.bestSellingBook)
-      .then((res) => {
-        setBooksData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
-  const getBestDiscountBook = () => {
-    setSubmitting(true);
-    httpClient()
-      .get(APP_API.bestDiscountBook)
-      .then((res) => {
-        setBooksData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
+
   const dispatch = useDispatch();
   const [data, setData] = useState<DataType[]>([]);
   const onChange = (e: SelectValue) => {
-    setSubmitting(true);
-    if (booksSearch.keyWord != null) {
-      dispatch(
-        updateKeySearch({
-          idCategory: e,
-          keyWord: booksSearch.keyWord,
-          minPrice: 0,
-          maxPrice: 100000000,
-        })
-      );
-      setValue(booksSearch.idCategory);
-      console.log(booksSearch.keyWord);
-      let bookSearch = {};
-      // setCategorySearch(e?.toString);
+    if (booksAddEventSearch.keyWord != null) {
       if (e === "all") {
         dispatch(
-          updateKeySearch({
+          updateAddEventKeySearch({
             idCategory: null,
-            keyWord: booksSearch.keyWord,
+            keyWord: booksAddEventSearch.keyWord,
             minPrice: 0,
             maxPrice: 100000000,
+            idEvent: id,
+            order: sort,
           })
         );
-        bookSearch = {
-          idCategory: null,
-          keyWord: booksSearch.keyWord,
-          minPrice: minPriceSearch,
-          maxPrice: maxPriceSearch,
-        };
       } else {
-        bookSearch = {
-          idCategory: e,
-          keyWord: booksSearch.keyWord,
-          minPrice: minPriceSearch,
-          maxPrice: maxPriceSearch,
-        };
+        setValue(e);
+        dispatch(
+          updateAddEventKeySearch({
+            idCategory: e,
+            keyWord: booksAddEventSearch.keyWord,
+            minPrice: 0,
+            maxPrice: 100000000,
+            idEvent: id,
+            order: sort,
+          })
+        );
       }
-      console.log(bookSearch);
-      // setValue(e.target.value);
-      httpClient()
-        .post(APP_API.booksSearch, bookSearch)
-        .then((res) => {
-          console.log(res);
-          setBookArray([...res.data]);
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .finally(() => setSubmitting(false));
     }
-    // if (e.target.value == 0) {
-    //   onLoadBook();
-    // } else {
   };
+  const [sort, setSort] = useState("Đánh giá cao");
   const onSortChange = (e: SelectValue) => {
     console.log(e);
-    if (e === "vote") getFavouriteBook();
-    else if (e === "new") getNewBook();
-    else if (e === "sell") getBestSellingBook();
-    else if (e === "discount") getBestDiscountBook();
+
+    if (id && booksAddEventSearch.keyWord != null) {
+      const setBookSearch = (order: string) => {
+        dispatch(
+          updateAddEventKeySearch({
+            idCategory: booksAddEventSearch.idCategory,
+            keyWord: booksAddEventSearch.keyWord,
+            minPrice: minPriceSearch,
+            maxPrice: maxPriceSearch,
+            idEvent: id,
+            order: order,
+          })
+        );
+      };
+      if (e === "vote") {
+        setSort("Đánh giá cao");
+        setBookSearch("Đánh giá cao");
+      } else if (e === "new") {
+        setSort("Mới nhất");
+        setBookSearch("Mới nhất");
+      } else {
+        setSort("Bán chạy");
+        setBookSearch("Bán chạy");
+      }
+    }
   };
   const onPriceChange = (e: SelectValue) => {
-    setSubmitting(true);
-    if (booksSearch.keyWord != null) {
+    if (booksAddEventSearch.keyWord != null) {
       let bookSearch = {};
-
-      const priceSearch = (
-        min: number,
-        max: number,
-        id: number,
-        key: string
-      ) => {
+      console.log(booksAddEventSearch.idCategory);
+      console.log(value);
+      const priceSearch = (min: number, max: number) => {
         setMinPriceSearch(min);
         setMaxPriceSearch(max);
-
-        if (value === 0) {
-          bookSearch = {
-            idCategory: null,
-            keyWord: booksSearch.keyWord,
+        dispatch(
+          updateAddEventKeySearch({
+            idCategory: booksAddEventSearch.idCategory,
+            keyWord: booksAddEventSearch.keyWord,
             minPrice: min,
             maxPrice: max,
-          };
-        } else {
-          bookSearch = {
-            idCategory: id,
-            keyWord: booksSearch.keyWord,
-            minPrice: min,
-            maxPrice: max,
-          };
-        }
+            idEvent: id,
+            order: sort,
+          })
+        );
       };
 
       if (e === "all") {
-        priceSearch(0, 10000000, categorySearch, "");
+        priceSearch(0, 10000000);
       } else if (e === "40") {
-        priceSearch(0, 40000, categorySearch, "");
+        priceSearch(0, 40000);
       } else if (e === "4070") {
-        priceSearch(40000, 70000, categorySearch, "");
+        priceSearch(40000, 70000);
       } else if (e === "70100") {
-        priceSearch(70000, 100000, categorySearch, "");
+        priceSearch(70000, 100000);
       } else if (e === "100150") {
-        priceSearch(100000, 150000, categorySearch, "");
+        priceSearch(100000, 150000);
       } else if (e === "150") {
-        priceSearch(150000, 10000000, categorySearch, "");
+        priceSearch(150000, 10000000);
       }
       console.log(bookSearch);
+    }
+  };
+  const onSearch = () => {
+    setSubmitting(true);
+
+    if (id && booksAddEventSearch.keyWord != null) {
+      let bookSearch = {};
+      bookSearch = {
+        idCategory: booksAddEventSearch.idCategory,
+        keyWord: booksAddEventSearch.keyWord,
+        minPrice: minPriceSearch,
+        maxPrice: maxPriceSearch,
+        idEvent: id,
+        order: sort,
+      };
 
       httpClient()
-        .post(APP_API.booksSearch, bookSearch)
+        .post(APP_API.searchAddEventBooks, bookSearch)
         .then((res) => {
-          console.log(res);
-          setBookArray([...res.data]);
           setBooksData(res.data);
         })
         .catch((err) => {
@@ -371,94 +287,78 @@ function AddBooksToEvent() {
         .finally(() => setSubmitting(false));
     }
   };
-  const onSearch = () => {
-    setSubmitting(true);
-
-    // if (booksSearch.keyWord != null) {
-    //   console.log(booksSearch);
-    //   if (booksSearch.idCategory == null) setValue(0);
-    //   else {
-    //     setValue(booksSearch.idCategory);
-    //   }
-    //   //setValue(booksSearch.idCategory);
-    //   setCategorySearch(booksSearch.idCategory);
-    //   let bookSearch = {};
-    //   if (value == 0 && booksSearch.idCategory != null) {
-    //     bookSearch = {
-    //       idCategory: booksSearch.idCategory,
-    //       keyWord: booksSearch.keyWord,
-    //       minPrice: minPriceSearch,
-    //       maxPrice: maxPriceSearch,
-    //     };
-    //   } else if (value == 0 && booksSearch.idCategory == null) {
-    //     bookSearch = {
-    //       idCategory: null,
-    //       keyWord: booksSearch.keyWord,
-    //       minPrice: minPriceSearch,
-    //       maxPrice: maxPriceSearch,
-    //     };
-    //   } else {
-    //     bookSearch = {
-    //       idCategory: booksSearch.idCategory,
-    //       keyWord: booksSearch.keyWord,
-    //       minPrice: minPriceSearch,
-    //       maxPrice: maxPriceSearch,
-    //     };
-    //   }
-
-    //   httpClient()
-    //     .post(APP_API.booksSearch, bookSearch)
-    //     .then((res) => {
-    //       setBookArray([...res.data]);
-    //       setBooksData(res.data);
-    //     })
-    //     .catch((err) => {
-    //       console.log(err);
-    //     })
-    //     .finally(() => setSubmitting(false));
-    // }
-    httpClient()
-      .get(APP_API.booksCanAddToEvent.replace(":id", id || ""))
-      .then((res) => {
-        setBookArray([...res.data]);
-        setBooksData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setSubmitting(false));
-  };
   const onKeyChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (booksSearch.keyWord != null) {
+    if (booksAddEventSearch.keyWord != null) {
       setKeyWordSearch(e.target.value);
-      console.log(booksSearch);
+      console.log(booksAddEventSearch);
       dispatch(
-        updateKeySearch({
-          idCategory: booksSearch.idCategory,
+        updateAddEventKeySearch({
+          idCategory: booksAddEventSearch.idCategory,
           keyWord: e.target.value,
           minPrice: 0,
           maxPrice: 100000000,
+          idEvent: id,
+          order: sort,
         })
       );
     }
   };
   const [bookId, setBookId] = useState(0);
   const { id } = useParams();
-  const [discountPercentValue, setDiscountPercentValue] = useState(0);
+  const [discountValue, setDiscountPercentValue] = useState(0);
   const [visible, setVisible] = useState(false);
-  const showModal = (bookId: number) => {
+  const [bookPrice, setBookPrice] = useState(0);
+  const [unit, setUnit] = useState("%");
+  const showModal = (bookId: number, price: number) => {
     setBookId(bookId);
+    setBookPrice(price);
+    console.log(price);
     setVisible(true);
-  };
-
-  const handleOk = () => {
     if (id) {
-      httpClient()
-        .post(APP_API.addEventBooks, {
+      setDataRequest({
+        eventId: parseInt(id),
+        bookId: bookId,
+        discountPercentValue: discountValue,
+      });
+    }
+  };
+  const [discountType, setDisCountType] = useState("percent");
+  const setDataRequestValue = (type: string, discountValue: number) => {
+    if (id) {
+      if (type == "percent") {
+        setUnit("%");
+        setDataRequest({
           eventId: parseInt(id),
           bookId: bookId,
-          discountPercentValue: discountPercentValue,
-        })
+          discountPercentValue: discountValue,
+        });
+      } else if (type == "number") {
+        setUnit("VNĐ");
+        setDataRequest({
+          eventId: parseInt(id),
+          bookId: bookId,
+          discountValue: discountValue,
+        });
+      } else if (type == "newPrice") {
+        setUnit("VNĐ");
+        setDataRequest({
+          eventId: parseInt(id),
+          bookId: bookId,
+          discountValue: bookPrice - discountValue,
+        });
+      }
+    }
+  };
+  const onSelectDiscountTypeChange = (e: RadioChangeEvent) => {
+    setDisCountType(e.target.value);
+    setDataRequestValue(e.target.value, discountValue);
+  };
+  const [dataRequest, setDataRequest] = useState({});
+  const handleOk = () => {
+    const data = {};
+    if (id && discountValue != 0) {
+      httpClient()
+        .post(APP_API.addEventBooks, dataRequest)
         .then((res) => {
           message.success("Thêm vào sự kiện thành công!");
           console.log(res);
@@ -468,9 +368,12 @@ function AddBooksToEvent() {
         .catch((err) => {
           console.log(err);
         });
+    } else {
+      message.error("Ưu Đãi Phải Lớn Hơn 0");
     }
   };
   const [eventImage, setEventImage] = useState("");
+  const [status, setStatus] = useState("Đang diễn ra");
   const [detail, setDetail] = useState("");
   const [dayStart, setDayStart] = useState("");
   const [dayEnd, setDayEnd] = useState("");
@@ -489,6 +392,7 @@ function AddBooksToEvent() {
               setDayStart(event.dayStart);
               setDayEnd(event.dayEnd);
               setEventImage(event.image);
+              setStatus(event.status);
             }
           });
         }
@@ -515,9 +419,9 @@ function AddBooksToEvent() {
       .catch((err) => {
         console.log(err);
       });
-  }, [booksSearch]);
+  }, [booksAddEventSearch]);
   return (
-    <Spin spinning={submitting}>
+    <>
       <div className="bg-white pl-4 pr-4 pt-4" style={{ width: "1220px" }}>
         <h3 style={{ color: "	#FF6666", fontFamily: "Helvetica" }}>
           {
@@ -642,23 +546,22 @@ function AddBooksToEvent() {
               <Option value="sell" className="font-cate">
                 <p style={{ marginBottom: "0" }}>Bán Chạy</p>
               </Option>
-              <Option value="discount" className="font-cate">
-                <p style={{ marginBottom: "0" }}>Giảm Giá</p>
-              </Option>
             </Select>
           </div>
         </div>
-        <div
-          className="bg-white"
-          style={{ border: "1px solid rgba(0,0,0,.125)" }}
-        >
-          <Table
-            columns={columns}
-            dataSource={data}
-            scroll={{ x: true, y: 430 }}
-            pagination={{ position: ["bottomCenter"] }}
-          />
-        </div>
+        <Spin spinning={submitting}>
+          <div
+            className="bg-white"
+            style={{ border: "1px solid rgba(0,0,0,.125)" }}
+          >
+            <Table
+              columns={columns}
+              dataSource={data}
+              scroll={{ x: true, y: 430 }}
+              pagination={{ position: ["bottomCenter"] }}
+            />
+          </div>
+        </Spin>
       </div>
       <Modal
         visible={visible}
@@ -681,27 +584,85 @@ function AddBooksToEvent() {
           </div>,
         ]}
       >
-        <div style={{}}>
-          <span
-            style={{
-              fontSize: 16,
-
-              color: "#555555",
-            }}
+        <div className="d-flex justify-content-center">
+          <Radio.Group
+            className="mt-3 mb-3"
+            key="price"
+            onChange={onSelectDiscountTypeChange}
+            value={discountType}
           >
-            Giảm Giá (%):
-          </span>
+            <Space
+              direction="horizontal"
+              style={{
+                gap: "0px",
+              }}
+            >
+              <Radio value="percent" className="font-cate">
+                <p
+                  style={{
+                    color: "#111111",
+                    fontSize: "14px",
+
+                    marginBottom: 0,
+                  }}
+                >
+                  Theo %
+                </p>
+              </Radio>
+              <Radio value="number" className="font-cate">
+                <p
+                  style={{
+                    color: "#111111",
+                    fontSize: "14px",
+
+                    marginBottom: 0,
+                  }}
+                >
+                  Theo số tiền
+                </p>
+              </Radio>
+              <Radio value="newPrice" className="font-cate">
+                <p
+                  style={{
+                    color: "#111111",
+                    fontSize: "14px",
+
+                    marginBottom: 0,
+                  }}
+                >
+                  Giá Cụ Thể
+                </p>
+              </Radio>
+            </Space>
+          </Radio.Group>
         </div>
 
-        <Input
-          type="number"
-          style={{}}
-          onChange={(e) => {
-            setDiscountPercentValue(parseInt(e.target.value));
-          }}
-        />
+        <div className="d-flex justify-content-center">
+          <Form>
+            <Form.Item
+              name="discountPercentValue"
+              style={{ fontSize: "16px", width: "140px" }}
+              rules={[{ required: true, message: "Nhập Ưu Đãi!" }]}
+            >
+              <div className="d-flex pb-0 align-items-center">
+                <Input
+                  className="mr-1"
+                  type="number"
+                  defaultValue={discountValue}
+                  style={{}}
+                  onChange={(e) => {
+                    setDiscountPercentValue(parseInt(e.target.value));
+                    setDataRequestValue(discountType, parseInt(e.target.value));
+                  }}
+                  value={discountValue}
+                />{" "}
+                ({unit})
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
       </Modal>
-    </Spin>
+    </>
   );
 }
 

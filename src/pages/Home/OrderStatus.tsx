@@ -8,6 +8,7 @@ import { httpClient } from "../../httpClient/httpServices";
 import { adminRoutes } from "../../routes/routes";
 
 function OrderStatus() {
+  const [order, setOrder] = useState(0);
   const [cancelOrder, setCancelOrder] = useState(0);
   const [confirmOrder, setConfirmOrder] = useState(0);
   const [preparingOrder, setPreparingOrder] = useState(0);
@@ -15,9 +16,17 @@ function OrderStatus() {
   const [receivedOrder, setReceivedOrder] = useState(0);
   const [successfulOrder, setSuccessfulOrder] = useState(0);
 
-  const getCanceledOrder = () => {
+  const getOrder = () => {
     httpClient()
       .get(APP_API.getOrder)
+      .then((res) => {
+        setOrder(res.data.length);
+      })
+      .catch((err) => {});
+  };
+  const getCanceledOrder = () => {
+    httpClient()
+      .get(APP_API.getCanceledOrder)
       .then((res) => {
         setCancelOrder(res.data.length);
       })
@@ -79,13 +88,7 @@ function OrderStatus() {
     },
     {
       x: "Đã Hủy",
-      y:
-        cancelOrder -
-        (preparingOrder +
-          confirmOrder +
-          shippingOrder +
-          receivedOrder +
-          successfulOrder),
+      y: cancelOrder,
     },
   ];
   useEffect(() => {
@@ -123,14 +126,7 @@ function OrderStatus() {
             <FontAwesomeIcon color="#FFCC99" className="mr-2" icon={faBook} />
             Đã Hủy:
           </p>
-          <p style={{ margin: "0 0", color: "blue" }}>
-            {cancelOrder -
-              (preparingOrder +
-                confirmOrder +
-                shippingOrder +
-                receivedOrder +
-                successfulOrder)}
-          </p>
+          <p style={{ margin: "0 0", color: "blue" }}>{cancelOrder}</p>
         </div>
         <div
           style={{
@@ -145,8 +141,8 @@ function OrderStatus() {
               }}
             >
               <VictoryPie
-                padAngle={({ datum }) => datum.y}
-                innerRadius={70}
+                padAngle={10}
+                innerRadius={80}
                 data={myData}
                 height={380}
                 colorScale={["#FFCC33", "#FFCC66", "#FFCC99"]}
@@ -164,8 +160,17 @@ function OrderStatus() {
             Biểu Đồ Tình Trạng Đơn Hàng
           </p>
         </div>
-        <div className="mt-1">
+        <div className="mt-1 d-flex justify-content-between">
           <Link to={adminRoutes.order}>Quản Lý Đơn Hàng</Link>
+          <p>
+            Tổng Đơn Hàng:{" "}
+            {preparingOrder +
+              confirmOrder +
+              shippingOrder +
+              receivedOrder +
+              successfulOrder +
+              cancelOrder}{" "}
+          </p>
         </div>
       </div>
     </>

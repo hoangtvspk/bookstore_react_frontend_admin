@@ -49,13 +49,10 @@ function Orders() {
   };
   const getCanceledOrder = () => {
     httpClient()
-      .get(APP_API.getOrder)
+      .get(APP_API.getCanceledOrder)
       .then((res) => {
         console.log(res);
-        res.data.map((order: GetOrder) => {
-          if (order.status === "Đã hủy")
-            setCanceledOrderArray((state) => [...state, order]);
-        });
+        setCanceledOrderArray(res.data);
       })
       .catch((err) => {
         console.log(err);
