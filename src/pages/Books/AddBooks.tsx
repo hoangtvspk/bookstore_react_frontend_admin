@@ -36,7 +36,7 @@ const AddBooks = () => {
   const [quantity, setQuantity] = useState(0);
   const [price, setPrice] = useState(0);
   const [detail, setDetail] = useState("");
-  const [idCate, setIdCate] = useState(2 as SelectValue);
+  const [idCate, setIdCate] = useState(1 as SelectValue);
 
   const nameInputChange = (
     event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
@@ -86,6 +86,7 @@ const AddBooks = () => {
         console.log(res);
         setCategoryArray([...res.data]);
         console.log(categoryArray);
+        setIdCate(res.data[0].id);
       })
       .catch((err) => {
         console.log(err);
@@ -93,7 +94,6 @@ const AddBooks = () => {
   }, []);
 
   const onFinish = (values: AddBookForm) => {
-    setIdCate(1);
     const formData: FormData = new FormData();
     formData.append(
       "book",
@@ -187,18 +187,14 @@ const AddBooks = () => {
                   >
                     Thể Loại:
                   </span>
-                  <Form.Item
-                    className="form-item "
-                    name="idCate"
-                    rules={[{ required: true, message: "Chọn Thể Loại" }]}
-                  >
+                  <Form.Item className="form-item " name="idCate">
                     <Select
                       style={{ width: "260px" }}
                       allowClear
                       onChange={(e) => {
                         idCateInputChange(e);
                       }}
-                      defaultValue={1}
+                      defaultValue={idCate}
                     >
                       {categoryArray.length > 0 &&
                         categoryArray.map((category: Category) => (

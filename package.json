@@ -48,7 +48,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "aws --profile weed --endpoint-url https://s3.vanhtuan0409.com s3 sync ./build s3://doubhmanager --delete"
   },
   "eslintConfig": {
     "extends": [

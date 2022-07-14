@@ -148,7 +148,7 @@ const EditCategories = () => {
                   color: "#555555",
                 }}
               >
-                Hình Ảnh Sản Phẩm:
+                Hình Ảnh Danh Mục:
               </span>
               <ImageUploading
                 value={images}

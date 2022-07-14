@@ -119,14 +119,44 @@ function Books() {
       dataIndex: "price",
       key: "price",
       render: (_, { price }) => (
-        <div className="d-flex align-items-center">
-          <p style={{ marginBottom: "0px" }}>
-            {stringPrice(price[0] - (price[0] * price[1]) / 100)} ₫
-          </p>
-
-          {price[1] > 0 && (
+        <div className="d-flex align-items-center" style={{ width: "130px" }}>
+          {!price[2] && !price[3] && (
             <>
-              <p className="mb-0">&nbsp;(-{price[1]}%)</p>
+              <p style={{ marginBottom: "0px" }}>
+                {stringPrice(price[0] - (price[0] * price[1]) / 100)} ₫
+              </p>
+
+              {price[1] > 0 && (
+                <>
+                  <p className="mb-0">&nbsp;(-{price[1]}%)</p>
+                </>
+              )}
+            </>
+          )}
+          {price[2] && (
+            <>
+              <p style={{ marginBottom: "0px" }}>
+                {stringPrice(price[0] - (price[0] * price[2]) / 100)} ₫
+              </p>
+
+              {price[1] > 0 && (
+                <>
+                  <p className="mb-0">&nbsp;(-{price[2]}%)</p>
+                </>
+              )}
+            </>
+          )}
+          {price[3] && (
+            <>
+              <p style={{ marginBottom: "0px" }}>
+                {stringPrice(price[0] - price[3])} ₫
+              </p>
+
+              {price[1] > 0 && (
+                <>
+                  <p className="mb-0">&nbsp;(-{price[3]}đ)</p>
+                </>
+              )}
             </>
           )}
         </div>
@@ -184,7 +214,12 @@ function Books() {
             category: book.category?.nameCategory,
             id: book.id,
             nameBook: book.nameBook,
-            price: [book.price, book.discount],
+            price: [
+              book.price,
+              book.discount,
+              book.bookForEvents[0]?.discountPercentValue,
+              book.bookForEvents[0]?.discountValue,
+            ],
             quantity: book.quantity,
             review: [book.rating, book.reviews.length],
           },

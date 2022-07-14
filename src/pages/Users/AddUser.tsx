@@ -198,7 +198,7 @@ const AddUsers = () => {
                   color: "#555555",
                 }}
               >
-                Hình Ảnh Sản Phẩm:
+                Hình Đại Diện:
               </span>
               <ImageUploading
                 value={images}

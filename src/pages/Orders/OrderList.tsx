@@ -225,55 +225,183 @@ function OrderList({ orderArray, loadPage, status }: OrderProps) {
                         </p>
                       </div>
 
-                      <div className="item-totalquantity">
-                        <p style={{ marginBottom: "0px" }}>
-                          {stringPrice(
-                            purchaseItem.orderItems[0].book.price -
-                              (purchaseItem.orderItems[0].book.price *
-                                purchaseItem.orderItems[0].book.discount) /
-                                100
-                          )}{" "}
-                          ₫
-                        </p>
-                        {purchaseItem.orderItems[0].book.discount > 0 && (
-                          <>
-                            <p
-                              style={{
-                                color: "rgb(128, 128, 137) ",
-                                marginTop: "8px",
-                                fontSize: "15px",
-                                textDecoration: "line-through",
-                                paddingLeft: "8px",
-                                marginBottom: "0px",
-                              }}
-                            >
+                      {purchaseItem.orderItems[0].book.bookForEvents?.length <
+                        1 && (
+                        <>
+                          <div className="item-totalquantity">
+                            <p style={{ marginBottom: "0px" }}>
                               {stringPrice(
-                                purchaseItem.orderItems[0].book.price
+                                purchaseItem.orderItems[0].book.price -
+                                  (purchaseItem.orderItems[0].book.price *
+                                    purchaseItem.orderItems[0].book.discount) /
+                                    100
                               )}{" "}
                               ₫
                             </p>
-                            <p className="discountt">
-                              -{purchaseItem.orderItems[0].book.discount}%
-                            </p>
-                          </>
-                        )}
-                      </div>
+                            {purchaseItem.orderItems[0].book.discount > 0 && (
+                              <>
+                                <p
+                                  style={{
+                                    color: "rgb(128, 128, 137) ",
+                                    marginTop: "8px",
+                                    fontSize: "15px",
+                                    textDecoration: "line-through",
+                                    paddingLeft: "8px",
+                                    marginBottom: "0px",
+                                  }}
+                                >
+                                  {stringPrice(
+                                    purchaseItem.orderItems[0].book.price
+                                  )}{" "}
+                                  ₫
+                                </p>
+                                <p className="discountt">
+                                  -{purchaseItem.orderItems[0].book.discount}%
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
+                      {purchaseItem.orderItems[0].book.bookForEvents?.length >
+                        0 && (
+                        <>
+                          {purchaseItem.orderItems[0].book.bookForEvents[0]
+                            .discountPercentValue && (
+                            <>
+                              <div className="item-totalquantity">
+                                <p style={{ marginBottom: "0px" }}>
+                                  {stringPrice(
+                                    purchaseItem.orderItems[0].book.price -
+                                      (purchaseItem.orderItems[0].book.price *
+                                        purchaseItem.orderItems[0].book
+                                          .bookForEvents[0]
+                                          .discountPercentValue) /
+                                        100
+                                  )}{" "}
+                                  ₫
+                                </p>
+
+                                <p
+                                  style={{
+                                    color: "rgb(128, 128, 137) ",
+                                    marginTop: "8px",
+                                    fontSize: "15px",
+                                    textDecoration: "line-through",
+                                    paddingLeft: "8px",
+                                    marginBottom: "0px",
+                                  }}
+                                >
+                                  {stringPrice(
+                                    purchaseItem.orderItems[0].book.price
+                                  )}{" "}
+                                  ₫
+                                </p>
+                                <p className="discountt">
+                                  -
+                                  {
+                                    purchaseItem.orderItems[0].book
+                                      .bookForEvents[0].discountPercentValue
+                                  }
+                                  %
+                                </p>
+                              </div>
+                            </>
+                          )}
+                          {purchaseItem.orderItems[0].book.bookForEvents[0]
+                            .discountValue && (
+                            <>
+                              <div className="item-totalquantity">
+                                <p style={{ marginBottom: "0px" }}>
+                                  {stringPrice(
+                                    purchaseItem.orderItems[0].book.price -
+                                      purchaseItem.orderItems[0].book
+                                        .bookForEvents[0].discountValue
+                                  )}{" "}
+                                  ₫
+                                </p>
+
+                                <p
+                                  style={{
+                                    color: "rgb(128, 128, 137) ",
+                                    marginTop: "8px",
+                                    fontSize: "15px",
+                                    textDecoration: "line-through",
+                                    paddingLeft: "8px",
+                                    marginBottom: "0px",
+                                  }}
+                                >
+                                  {stringPrice(
+                                    purchaseItem.orderItems[0].book.price
+                                  )}{" "}
+                                  ₫
+                                </p>
+                                <p className="discountt">
+                                  -
+                                  {
+                                    purchaseItem.orderItems[0].book
+                                      .bookForEvents[0].discountValue
+                                  }
+                                  %
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </>
+                      )}
 
                       <div className="item-quantity">
                         <p style={{ marginBottom: "0px" }}>
                           {purchaseItem.orderItems[0].quantity}
                         </p>
                       </div>
-                      <div className="item-totalprice">
-                        {stringPrice(
-                          purchaseItem.orderItems[0].quantity *
-                            (purchaseItem.orderItems[0].book.price -
-                              (purchaseItem.orderItems[0].book.price *
-                                purchaseItem.orderItems[0].book.discount) /
-                                100)
-                        )}{" "}
-                        ₫
-                      </div>
+                      {purchaseItem.orderItems[0].book.bookForEvents?.length <
+                        1 && (
+                        <>
+                          <div className="item-totalprice">
+                            {stringPrice(
+                              purchaseItem.orderItems[0].quantity *
+                                (purchaseItem.orderItems[0].book.price -
+                                  (purchaseItem.orderItems[0].book.price *
+                                    purchaseItem.orderItems[0].book.discount) /
+                                    100)
+                            )}{" "}
+                            ₫
+                          </div>
+                        </>
+                      )}
+                      {purchaseItem.orderItems[0].book.bookForEvents?.length >
+                        0 && (
+                        <>
+                          {purchaseItem.orderItems[0].book.bookForEvents[0]
+                            .discountPercentValue && (
+                            <div className="item-totalprice">
+                              {stringPrice(
+                                purchaseItem.orderItems[0].quantity *
+                                  (purchaseItem.orderItems[0].book.price -
+                                    (purchaseItem.orderItems[0].book.price *
+                                      purchaseItem.orderItems[0].book
+                                        .bookForEvents[0]
+                                        .discountPercentValue) /
+                                      100)
+                              )}{" "}
+                              ₫
+                            </div>
+                          )}
+                          {purchaseItem.orderItems[0].book.bookForEvents[0]
+                            .discountValue && (
+                            <div className="item-totalprice">
+                              {stringPrice(
+                                purchaseItem.orderItems[0].quantity *
+                                  (purchaseItem.orderItems[0].book.price -
+                                    purchaseItem.orderItems[0].book
+                                      .bookForEvents[0].discountValue)
+                              )}{" "}
+                              ₫
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
 
                     <p
