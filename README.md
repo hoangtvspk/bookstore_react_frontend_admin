@@ -32,28 +32,28 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 ## Website's screenshot
 
 Login Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/dangnhap.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/tree/master/src/Image/dangnhap.png?raw=true)
 Dashboard Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/thongke.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/thongke.png?raw=true)
 Products Manage Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/sanpham.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/sanpham.png?raw=true)
 Edit Product Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/suasanpham.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/suasanpham.png?raw=true)
 Add Product Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/themsanpham.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/themsanpham.png?raw=true)
 Employees Manager Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/nhanvien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/nhanvien.png?raw=true)
 Edit Employee Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/suanhanvien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/suanhanvien.png?raw=true)
 Add Employee Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/themnhanvien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/themnhanvien.png?raw=true)
 Events Manager Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/sukien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/sukien.png?raw=true)
 Edit Event Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/suathongtinsukien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/suathongtinsukien.png?raw=true)
 Add Event Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/themsukien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/themsukien.png?raw=true)
 Event's Detail Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/chitietsukien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/chitietsukien.png?raw=true)
 Add Book Into Events Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/image/themsachvaosukien.png?raw=true)
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/themsachvaosukien.png?raw=true)
