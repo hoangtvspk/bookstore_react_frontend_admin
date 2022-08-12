@@ -31,8 +31,6 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## Website's screenshot
 
-Login Page:
-![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/tree/master/src/Image/dangnhap.png?raw=true)
 Dashboard Page:
 ![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/thongke.png?raw=true)
 Products Manage Page:
@@ -57,3 +55,5 @@ Event's Detail Page:
 ![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/chitietsukien.png?raw=true)
 Add Book Into Events Page:
 ![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/blob/master/src/Image/themsachvaosukien.png?raw=true)
+Login Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend_admin/tree/master/src/Image/dangnhap.png?raw=true)
