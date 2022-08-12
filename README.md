@@ -29,18 +29,31 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Website's screenshot
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Login Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/dangnhap.png?raw=true)
+Dashboard Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/thongke.png?raw=true)
+Products Manage Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/sanpham.png?raw=true)
+Edit Product Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/suasanpham.png?raw=true)
+Add Product Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/themsanpham.png?raw=true)
+Employees Manager Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/nhanvien.png?raw=true)
+Edit Employee Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/suanhanvien.png?raw=true)
+Add Employee Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/themnhanvien.png?raw=true)
+Events Manager Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/sukien.png?raw=true)
+Edit Event Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/suathongtinsukien.png?raw=true)
+Add Event Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/themsukien.png?raw=true)
+Event's Detail Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/chitietsukien.png?raw=true)
+Add Book Into Events Page:
+![alt text](https://github.com/hoangtvspk/bookstore_react_frontend/blob/master/src/image/themsachvaosukien.png?raw=true)

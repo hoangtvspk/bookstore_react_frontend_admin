@@ -131,7 +131,7 @@ function QuantityReport() {
                 className="d-flex justify-content-end"
                 style={{ color: "#9a9a9a", margin: 0, padding: 0 }}
               >
-                Tổng Sản Phẩm
+                Tổng Đầu Sách
               </p>
               <p
                 className="d-flex justify-content-end"

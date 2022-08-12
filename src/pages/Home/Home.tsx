@@ -6,6 +6,8 @@ import MonthlyReport from "./MonthlyReport";
 import QuantityReport from "./QuantityReport";
 import BestSellerIcon from "../../Image/topSeller.jpg";
 import OrderStatus from "./OrderStatus";
+import OutOfStock from "./OutOfStock";
+import Inventory from "./Inventory";
 
 const Home: React.FC = () => {
   useEffect(() => {}, []);
@@ -22,19 +24,19 @@ const Home: React.FC = () => {
         className="bg-white rounded-3 mt-3 p-4"
         style={{ border: "1px solid rgba(0,0,0,.125)" }}
       >
-        <h3>
-          <img
-            src={BestSellerIcon}
-            width={30}
-            height={30}
-            style={{
-              objectFit: "cover",
-              marginRight: "10px",
-            }}
-          ></img>
-          Top 20 Sản Phẩm Bán Chạy
-        </h3>
         <BestSellingTable />
+      </div>
+      <div
+        className="bg-white rounded-3 mt-3 p-4"
+        style={{ border: "1px solid rgba(0,0,0,.125)" }}
+      >
+        <OutOfStock />
+      </div>
+      <div
+        className="bg-white rounded-3 mt-3 p-4"
+        style={{ border: "1px solid rgba(0,0,0,.125)" }}
+      >
+        <Inventory />
       </div>
     </>
   );

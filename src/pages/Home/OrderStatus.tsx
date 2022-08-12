@@ -1,5 +1,6 @@
 import { faBook } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { VictoryPie } from "victory-pie";
@@ -15,6 +16,7 @@ function OrderStatus() {
   const [shippingOrder, setShippingOrder] = useState(0);
   const [receivedOrder, setReceivedOrder] = useState(0);
   const [successfulOrder, setSuccessfulOrder] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const getOrder = () => {
     httpClient()
@@ -71,6 +73,7 @@ function OrderStatus() {
       });
   };
   const getSuccessfulOrder = () => {
+    setLoading(true);
     httpClient()
       .get(APP_API.getSuccessfulOrder)
       .then((res) => {
@@ -78,7 +81,8 @@ function OrderStatus() {
       })
       .catch((err) => {
         console.log(err);
-      });
+      })
+      .finally(() => setLoading(false));
   };
   const myData = [
     { x: "Hoàn Thành", y: successfulOrder },
@@ -101,7 +105,7 @@ function OrderStatus() {
   }, []);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <div
         className="bg-white  rounded-3 p-4"
         style={{
@@ -160,9 +164,11 @@ function OrderStatus() {
             Biểu Đồ Tình Trạng Đơn Hàng
           </p>
         </div>
-        <div className="mt-1 d-flex justify-content-between">
-          <Link to={adminRoutes.order}>Quản Lý Đơn Hàng</Link>
-          <p>
+        <div className="mt-1 d-flex justify-content-between mb-0">
+          <Link className="mb-0" to={adminRoutes.order}>
+            Quản Lý Đơn Hàng
+          </Link>
+          <p className="mb-0">
             Tổng Đơn Hàng:{" "}
             {preparingOrder +
               confirmOrder +
@@ -173,7 +179,7 @@ function OrderStatus() {
           </p>
         </div>
       </div>
-    </>
+    </Spin>
   );
 }
 

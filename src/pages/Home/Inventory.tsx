@@ -4,30 +4,15 @@ import React, { useEffect, useState } from "react";
 import { APP_API } from "../../httpClient/config";
 import { httpClient } from "../../httpClient/httpServices";
 import { BestSelling } from "../../models/bestSelling";
-import BestSellerIcon from "../../Image/topSeller.jpg";
+import OutOfStockIcon from "../../Image/fullstock.png";
 import { useNavigate } from "react-router-dom";
 import { adminRoutes } from "../../routes/routes";
+import { Book } from "../../models/book";
 
-const BestSellingTable = () => {
+const Inventory = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isThisMonth, setIsThisMonth] = useState(true);
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
-  const [button, setButton] = useState("Xem tháng trước");
-  const onMonthButtonClick = () => {
-    setButton("Quay lại tháng này");
-    if (isThisMonth === true) {
-      setIsThisMonth(false);
-      setMonth(new Date().getMonth());
-      setButton("Quay lại tháng này");
-      loadData(new Date().getMonth());
-    } else {
-      setIsThisMonth(true);
-      setMonth(new Date().getMonth() + 1);
-      setButton("Xem tháng trước");
-      loadData(new Date().getMonth() + 1);
-    }
-  };
+
   const stringPrice = (number: number) => {
     const newNumber = number.toLocaleString(undefined, {
       maximumFractionDigits: 2,
@@ -46,7 +31,7 @@ const BestSellingTable = () => {
         console.log(res);
         message.success("Xóa Thành Công");
         navigate(adminRoutes.books);
-        loadData(month);
+        loadData();
       })
       .catch((err) => {
         console.error(err);
@@ -60,18 +45,15 @@ const BestSellingTable = () => {
     author: string;
     price: number[];
     sold: number;
+    quantity: number;
     image: string;
     review: number[];
   }
-  const loadData = (month: number) => {
+  const loadData = () => {
     setDataSource([]);
     setLoading(true);
     httpClient()
-      .get(
-        APP_API.reportBestSelling
-          .replace(":year", new Date().getFullYear().toString())
-          .replace(":month", month.toString())
-      )
+      .get(APP_API.inventory)
       .then((res) => {
         const reportData = res.data as BestSelling[];
         console.log(res.data);
@@ -92,6 +74,7 @@ const BestSellingTable = () => {
                   book.bookResponse.bookForEvents[0]?.discountValue,
                 ],
                 sold: book.sumQuantity,
+                quantity: book.bookResponse.quantity,
                 image: book.bookResponse.bookImages[0].image,
                 review: [
                   book.bookResponse.rating,
@@ -108,7 +91,7 @@ const BestSellingTable = () => {
       .then(() => setLoading(false));
   };
   useEffect(() => {
-    loadData(month);
+    loadData();
   }, []);
 
   const columns: ColumnsType<DataType> = [
@@ -200,7 +183,14 @@ const BestSellingTable = () => {
       title: "Đã Bán",
       dataIndex: "sold",
       key: "sold",
-      render: (text) => <div style={{ width: "50px" }}>{text}</div>,
+      render: (text) => <div style={{ width: "30px" }}>{text}</div>,
+      align: "center",
+    },
+    {
+      title: "Còn",
+      dataIndex: "quantity",
+      key: "quantity",
+      render: (text) => <div style={{ width: "30px" }}>{text}</div>,
       align: "center",
     },
     {
@@ -246,21 +236,18 @@ const BestSellingTable = () => {
   ];
   return (
     <Spin spinning={loading}>
-      <div className="d-flex justify-content-between">
-        <h4>
-          <img
-            src={BestSellerIcon}
-            width={30}
-            height={30}
-            style={{
-              objectFit: "cover",
-              marginRight: "10px",
-            }}
-          ></img>
-          Top 20 Sản Phẩm Bán Chạy Tháng {month}
-        </h4>
-        <Button onClick={() => onMonthButtonClick()}>{button}</Button>
-      </div>
+      <h4>
+        <img
+          src={OutOfStockIcon}
+          width={30}
+          height={30}
+          style={{
+            objectFit: "cover",
+            marginRight: "10px",
+          }}
+        ></img>
+        Sản Phẩm Tồn Kho
+      </h4>
       <div
         style={{
           marginTop: "30px",
@@ -280,4 +267,4 @@ const BestSellingTable = () => {
   );
 };
 
-export default BestSellingTable;
+export default Inventory;

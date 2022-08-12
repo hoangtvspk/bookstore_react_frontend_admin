@@ -1,4 +1,5 @@
 import {
+  faBook,
   faBookmark,
   faBookOpen,
   faMoneyCheck,
@@ -89,22 +90,26 @@ function Books() {
       dataIndex: "bookImages",
       key: "bookImages",
       render: (text) => <img className="order-item-image" src={text}></img>,
+      align: "center",
     },
     {
       title: "Tên Sách",
       dataIndex: "nameBook",
       key: "nameBook",
       // render: text => <a>{text}</a>,
+      align: "center",
     },
     {
       title: "Thể Loại",
       dataIndex: "category",
       key: "category",
+      align: "center",
     },
     {
       title: "Tác Giả",
       dataIndex: "author",
       key: "author",
+      align: "center",
     },
     {
       title: "Kho",
@@ -113,13 +118,17 @@ function Books() {
       render: (_, { quantity }) => (
         <div style={{ width: "40px" }}>{quantity}</div>
       ),
+      align: "center",
     },
     {
       title: "Đơn Giá",
       dataIndex: "price",
       key: "price",
       render: (_, { price }) => (
-        <div className="d-flex align-items-center" style={{ width: "130px" }}>
+        <div
+          className="d-flex justify-content-center"
+          style={{ width: "130px" }}
+        >
           {!price[2] && !price[3] && (
             <>
               <p style={{ marginBottom: "0px" }}>
@@ -161,17 +170,19 @@ function Books() {
           )}
         </div>
       ),
+      align: "center",
     },
     {
       title: "Đánh Giá",
       dataIndex: "review",
       key: "review",
       render: (_, { review }) => (
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center" style={{ width: "130px" }}>
           <p style={{ marginBottom: "0px" }}>{stringPrice(review[0])}</p>
           <p className="mb-0">&nbsp;({review[1]} lượt đánh giá)</p>
         </div>
       ),
+      align: "center",
     },
     {
       title: "Sửa/Xóa",
@@ -199,6 +210,7 @@ function Books() {
           </Popconfirm>
         </div>
       ),
+      align: "center",
     },
   ];
   const setBooksData = (bookList: Book[]) => {
@@ -536,6 +548,17 @@ function Books() {
                   <p style={{ marginBottom: "0" }}> Từ 150.000đ</p>
                 </Option>
               </Select>
+            </div>
+            <div className="d-flex align-items-end ">
+              <p style={{ margin: "0 10px" }}>
+                <FontAwesomeIcon
+                  color="#0099FF"
+                  className="mr-2"
+                  icon={faBook}
+                />
+                Số Lượng Sách:
+              </p>
+              <p style={{ margin: "0 0", color: "blue" }}>{data.length}</p>
             </div>
           </div>{" "}
           <div className="mr-2">

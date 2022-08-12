@@ -1,5 +1,6 @@
 import { faBook, faMoneyBillAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Spin } from "antd";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -20,6 +21,7 @@ import "./Home.css";
 
 const MonthlyReport = () => {
   const [reportArray, setReportArray] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [labelData, setLabelData] = useState<any[]>([]);
 
@@ -36,6 +38,7 @@ const MonthlyReport = () => {
   const [sumQuantity, setSumquantity] = useState(0);
 
   const onLoadReportYear = (yearr: number) => {
+    setLoading(true);
     httpClient()
       .get(APP_API.reportByYear.replace(":year", yearr?.toString()))
       .then((res) => {
@@ -61,7 +64,8 @@ const MonthlyReport = () => {
               label: d.y,
             })),
         ]);
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
@@ -69,7 +73,7 @@ const MonthlyReport = () => {
   }, []);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <div
         className="bg-white rounded-3 p-4"
         style={{ border: "1px solid rgba(0,0,0,.125)" }}
@@ -108,17 +112,18 @@ const MonthlyReport = () => {
             xType="ordinal"
             width={700}
             height={200}
-            // color="red"
-            // stroke="red"
-            style={{ marginTop: "20px" }}
+            size={2}
+            color="#0099FF"
+            stroke="#0099FF"
+            style={{ marginTop: "20px", fontSize: "12px" }}
           >
             <VerticalGridLines />
             <HorizontalGridLines />
             <XAxis title="Tháng" />
-            <YAxis title="Doanh Thu (đ)" width={90} left={-35} />
+            <YAxis title="Doanh Thu (đ)" width={90} left={-25} />
             <LineMarkSeries
               // barWidth={0.8}
-              className="vertical-bar-series-example"
+              // className="vertical-bar-series-example"
               data={reportArray}
             />
             <LabelSeries data={labelData} />
@@ -131,7 +136,7 @@ const MonthlyReport = () => {
           <Link to={adminRoutes.orderReport}>Chi Tiết Biểu Đồ Doanh Thu</Link>
         </div>
       </div>
-    </>
+    </Spin>
   );
 };
 

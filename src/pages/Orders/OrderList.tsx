@@ -1,4 +1,8 @@
-import { faBook, faDollarSign } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBook,
+  faDollarSign,
+  faMoneyBill,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Checkbox } from "antd";
 import { CheckboxChangeEvent } from "antd/lib/checkbox/Checkbox";
@@ -67,6 +71,9 @@ function OrderList({ orderArray, loadPage, status }: OrderProps) {
       setCheckedOrders(checkedOrders.filter((item) => item !== e.target.value));
     }
   };
+  const formatDate = (date: string) => {
+    return date.slice(8, 10) + "-" + date.slice(5, 7) + "-" + date.slice(0, 4);
+  };
   return (
     <>
       <div
@@ -90,12 +97,29 @@ function OrderList({ orderArray, loadPage, status }: OrderProps) {
             <Checkbox onChange={onCheckAllChange} checked={checkAll}>
               Chọn Tất Cả
             </Checkbox>
-            <ListOrderAction
-              id={checkedOrders}
-              loadPage={loadPage}
-              status={status}
-              disable={disable}
-            ></ListOrderAction>
+            <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center ">
+                <p style={{ margin: "0 10px" }}>
+                  <FontAwesomeIcon
+                    color="#0099FF"
+                    className="mr-2"
+                    icon={faMoneyBill}
+                  />
+                  Số Đơn Hàng:
+                </p>
+                <p style={{ margin: "0 0", color: "blue" }}>
+                  {orderArray.length}
+                </p>
+              </div>
+              <div className="pl-3">
+                <ListOrderAction
+                  id={checkedOrders}
+                  loadPage={loadPage}
+                  status={status}
+                  disable={disable}
+                ></ListOrderAction>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -136,7 +160,9 @@ function OrderList({ orderArray, loadPage, status }: OrderProps) {
                             color: "	#555555",
                           }}
                         >
-                          {purchaseItem.date}
+                          Mã đơn hàng: {purchaseItem.id} - Ngày:{" "}
+                          {formatDate(purchaseItem.date.slice(0, 10))} - Giờ:{" "}
+                          {purchaseItem.date.slice(11, 21)}
                         </p>
                       </div>
                       <p

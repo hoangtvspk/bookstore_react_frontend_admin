@@ -27,71 +27,6 @@ function OrderDetail() {
     return newNumber;
   };
 
-  const { Step } = Steps;
-  const onCancel = (id: number) => {
-    if (id) {
-      httpClient()
-        .get(APP_API.cancelOrder.replace(":id", id.toString()))
-        .then((res) => {
-          console.log(res);
-          message.success("Cancel successfully");
-          loadPage();
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Can't delete");
-        })
-        .finally();
-    }
-  };
-  const onConfirm = () => {
-    if (orderId) {
-      httpClient()
-        .post(APP_API.confirmOrder, [orderId])
-        .then((res) => {
-          console.log(res);
-          message.success("Duyệt đơn hàng thành công");
-          loadPage();
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Duyệt đơn hàng thất bại");
-        })
-        .finally();
-    }
-  };
-  const onShip = () => {
-    if (orderId) {
-      httpClient()
-        .post(APP_API.shipOrder, [orderId])
-        .then((res) => {
-          console.log(res);
-          message.success("Xác nhận giao đơn hàng!");
-          loadPage();
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Không thể giao đơn hàng này!");
-        })
-        .finally();
-    }
-  };
-  const onFinishOrder = () => {
-    if (orderId) {
-      httpClient()
-        .post(APP_API.shipOrder, [orderId])
-        .then((res) => {
-          console.log(res);
-          message.success("Đơn hàng thành công!");
-          loadPage();
-        })
-        .catch((err) => {
-          console.log(err);
-          message.error("Không thể xác nhận!");
-        })
-        .finally();
-    }
-  };
   const loadPage = () => {
     console.log(orderId);
     if (orderId) {
@@ -108,7 +43,9 @@ function OrderDetail() {
         .finally(() => setSubmitting(false));
     }
   };
-  const navigate = useNavigate();
+  const formatDate = (date: string) => {
+    return date.slice(8, 10) + "-" + date.slice(5, 7) + "-" + date.slice(0, 4);
+  };
   useEffect(() => {
     setSubmitting(true);
     loadPage();
@@ -129,7 +66,7 @@ function OrderDetail() {
             color: "	#555555",
           }}
         >
-          Mã đơn hàng: bks2h2k96{order.id}
+          Mã đơn hàng: {order.id}
         </p>
         <p
           style={{
@@ -149,7 +86,8 @@ function OrderDetail() {
             color: "	#555555",
           }}
         >
-          Ngày đặt: {order.date}
+          Ngày: {formatDate(order?.date?.slice(0, 10) || "")} - Giờ:{" "}
+          {order?.date?.slice(11, 21) || ""}
         </p>
         <p
           style={{

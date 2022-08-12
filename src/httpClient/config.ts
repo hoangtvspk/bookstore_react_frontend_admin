@@ -1,3 +1,5 @@
+import OutOfStock from "../pages/Home/OutOfStock";
+
 export const HTTP_CONFIG = {
   // baseURL: "http://localhost:8080/api/v1/",
   baseURL: "https://tomcat.vanhtuan0409.com/Bookstore_springboot/api/v1/",
@@ -45,7 +47,7 @@ export const APP_API = {
   reportByMonth: "/admin/report-revenue-month/year/:year/month/:month",
   reportByYear: "/admin/report-revenue-year/:year",
   reportByEveryYear: "/admin/report-revenue-every-year",
-  reportBestSelling: "/admin/report-best-selling",
+  reportBestSelling: "/admin/report-best-selling-month/:year/:month",
   newBook: "/books/new",
   bestSellingBook: "/books/best-selling",
   bestDiscountBook: "/books/best-discount",
@@ -66,5 +68,10 @@ export const APP_API = {
   editVoucher:"/admin/coupons/edit",
   deleteVoucher:"/admin/coupons/delete/:id",
   getVoucher: "/admin/coupons",
-  VoucherDetail:"/admin/coupons/:id"
+  VoucherDetail:"/admin/coupons/:id",
+  outOfStock: "/admin/report-outofstock",
+  inventory: "/admin/report-bad-selling",  
+  getOrderByMonth: "/admin/report-order-month/year/:year/month/:month",
+  getOrderByYear: "/admin/report-order-year/:year",
+  getOrderByEveryYear: "/admin/report-order-every-year",
 };

@@ -1,8 +1,8 @@
 import { faBook, faMoneyBillAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Select, Spin, Tabs } from "antd";
+import { Button, Divider, message, Select, Spin, Tabs } from "antd";
 import { SelectValue } from "antd/lib/select";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   HorizontalGridLines,
   LabelSeries,
@@ -20,8 +20,9 @@ import { ReportResponse } from "../../models/reportRes";
 import "./Home.css";
 
 import PageTitle from "../../components/PageTitle/PageTitle";
-
-const { TabPane } = Tabs;
+import { GetOrder } from "../../models/getOrder";
+import OrderReportList from "./OrderList";
+import { useReactToPrint } from "react-to-print";
 
 const OrderReport: React.FC = () => {
   const [reportArray, setReportArray] = useState<any[]>([]);
@@ -53,8 +54,16 @@ const OrderReport: React.FC = () => {
   ];
 
   const [chartTitle, setchartTitle] = useState(
-    "Doanh Thu Tháng " + months[month] + "-" + year
+    "Doanh Thu Tháng " +
+      (new Date().getMonth() + 1).toString() +
+      "-" +
+      new Date().getFullYear()
   );
+  const componentRef = useRef() as React.MutableRefObject<HTMLInputElement>;
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current || null,
+    documentTitle: chartTitle,
+  });
   const stringPrice = (number: number) => {
     if (number > 0) {
       const newNumber = number.toLocaleString(undefined, {
@@ -66,6 +75,50 @@ const OrderReport: React.FC = () => {
   };
   const [sumSaled, setSumSaled] = useState(0);
   const [sumQuantity, setSumquantity] = useState(0);
+  const [orderArray, setOrderArray] = useState<GetOrder[]>([]);
+  const getOrderByMonth = (month: number, year: number) => {
+    httpClient()
+      .get(
+        APP_API.getOrderByMonth
+          .replace(":year", year.toString())
+          .replace(":month", month.toString())
+      )
+      .then((res) => {
+        console.log(res);
+        setOrderArray(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data);
+      })
+      .finally(() => {});
+  };
+  const getOrderByYear = (yeah: number) => {
+    httpClient()
+      .get(APP_API.getOrderByYear.replace(":year", year.toString()))
+      .then((res) => {
+        console.log(res);
+        setOrderArray(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data);
+      })
+      .finally(() => {});
+  };
+  const getOrderByEveryYear = () => {
+    httpClient()
+      .get(APP_API.getOrderByEveryYear)
+      .then((res) => {
+        console.log(res);
+        setOrderArray(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+        message.error(err.response.data);
+      })
+      .finally(() => {});
+  };
   const onLoadReportMonth = (yearr: number, monthh: number) => {
     httpClient()
       .get(
@@ -142,8 +195,8 @@ const OrderReport: React.FC = () => {
             y: report.saled,
           })),
         ]);
-        setSumSaled(reportData.sumQuantity);
-        setSumquantity(reportData.sumSaled);
+        setSumSaled(reportData.sumSaled);
+        setSumquantity(reportData.sumQuantity);
         setLabelData([
           ...reportData.chartReportResponses
             .map((report: Report) => ({
@@ -162,13 +215,15 @@ const OrderReport: React.FC = () => {
   };
 
   useEffect(() => {
-    onLoadReportMonth(new Date().getFullYear(), new Date().getMonth());
+    onLoadReportMonth(new Date().getFullYear(), new Date().getMonth() + 1);
+    getOrderByMonth(new Date().getMonth() + 1, new Date().getFullYear());
   }, []);
 
   const onYearChange = (event: SelectValue): void => {
     if (event && event == "all") {
       setchartTitle("Doanh Thu Hàng Năm");
       onLoadReportEveryYear();
+      getOrderByEveryYear();
       setEveryYearReport(true);
       setXReportArray("Năm");
     }
@@ -176,6 +231,7 @@ const OrderReport: React.FC = () => {
       setchartTitle("Doanh Thu Từng Tháng Năm " + parseInt(event.toString()));
       setEveryYearReport(false);
       onLoadReportYear(parseInt(event.toString()) || 2022);
+      getOrderByYear(parseInt(event.toString()) || 2022);
       setXReportArray("Tháng");
     }
     if (event && event != "all" && !yearReport) {
@@ -186,6 +242,7 @@ const OrderReport: React.FC = () => {
       setEveryYearReport(false);
       setYear(parseInt(event.toString()) || 2022);
       onLoadReportMonth(parseInt(event.toString()) || 2022, month);
+      getOrderByMonth(month, parseInt(event.toString()) || 2022);
     }
   };
   const onMonthChange = (event: SelectValue): void => {
@@ -194,6 +251,7 @@ const OrderReport: React.FC = () => {
     }
     if (event == "all" && !everyYearReport) {
       setYearReport(true);
+      getOrderByYear(year);
       onLoadReportYear(year);
       setchartTitle("Doanh Thu Từng Tháng Năm " + year);
       setXReportArray("Tháng");
@@ -201,6 +259,7 @@ const OrderReport: React.FC = () => {
     if (event && event != "all" && !everyYearReport) {
       setYearReport(false);
       onLoadReportMonth(year, parseInt(event.toString()) || 1);
+      getOrderByMonth(parseInt(event.toString()) || 1, year);
       setchartTitle(
         "Doanh Thu Tháng " + months[parseInt(event.toString())] + "-" + year
       );
@@ -209,12 +268,24 @@ const OrderReport: React.FC = () => {
   };
 
   if (reportArray.length == 0) return <Spin spinning={true}></Spin>;
+
   return (
-    <>
+    <div
+      className="bg-white rounded-3"
+      style={{ border: "1px solid rgba(0,0,0,.125)" }}
+    >
       <div
-        className="bg-white rounded-3"
-        style={{ border: "1px solid rgba(0,0,0,.125)" }}
+        className="d-flex pt-3  justify-content-end"
+        style={{ paddingRight: "80px" }}
       >
+        <Button
+          style={{ backgroundColor: "#0099FF", color: "white" }}
+          onClick={() => handlePrint()}
+        >
+          Xuất Báo Cáo
+        </Button>
+      </div>
+      <div ref={componentRef}>
         <PageTitle>Biểu Đồ Thống Kê Doanh Thu</PageTitle>
         <div className="d-flex justify-content-between">
           <div className="d-flex  p-lg-4  align-items-center">
@@ -241,7 +312,7 @@ const OrderReport: React.FC = () => {
               onChange={(e) => {
                 onMonthChange(e);
               }}
-              defaultValue={new Date().getMonth()}
+              defaultValue={new Date().getMonth() + 1}
               style={{ width: "100px" }}
             >
               <Option value="all">Cả Năm</Option>
@@ -284,14 +355,14 @@ const OrderReport: React.FC = () => {
           xType="ordinal"
           width={1100}
           height={400}
-          // color="red"
-          // stroke="red"
-          style={{ marginLeft: "50px" }}
+          color="#0099FF"
+          stroke="#0099FF"
+          style={{ marginLeft: "50px", fontSize: "12px" }}
         >
           <VerticalGridLines />
           <HorizontalGridLines />
           <XAxis title={XreportArray} />
-          <YAxis title="Doanh Thu (đ)" width={90} left={-35} />
+          <YAxis title="Doanh Thu (đ)" width={90} left={-25} />
           <LineMarkSeries
             // barWidth={0.8}
             className="vertical-bar-series-example"
@@ -302,8 +373,13 @@ const OrderReport: React.FC = () => {
         <div className="d-flex align-items-center justify-content-center">
           <p>{chartTitle}</p>
         </div>
+        <div style={{ paddingRight: "100px", paddingLeft: "100px" }}>
+          <Divider></Divider>
+        </div>
+        <PageTitle>{orderArray.length} Đơn Hàng</PageTitle>
+        <OrderReportList orderArray={orderArray} />
       </div>
-    </>
+    </div>
   );
 };
 
